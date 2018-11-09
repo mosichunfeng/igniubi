@@ -14,35 +14,32 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 @Service("iStudentServiceImpl")
-public class StudentServiceImpl
-  implements IStudentService
-{
+public class StudentServiceImpl implements IStudentService {
 
-  @Resource(name="IStudentDao")
-  private IStudentDao studentDao;
+	@Resource(name = "IStudentDao")
+	private IStudentDao studentDao;
 
-  public void parseExcel(MultipartFile file)
-  {
-    String fileName = file.getOriginalFilename();
-    String[] columns = { "编号", "学号", "姓名", "班级", "性别" };
-    InputStream is = null;
-    try {
-      is = file.getInputStream();
-    } catch (IOException e) {
-      e.printStackTrace();
-    }
-    List list = ExcelUtil.parseExcel(fileName, is, columns);
-    List studentList = new ArrayList();
-    for (Map map : list) {
-      StudentDO student = new StudentDO();
-      student.setStudent_id((String)map.get("学号"));
-      student.setStudent_name((String)map.get("姓名"));
-      student.setStudent_class((String)map.get("班级"));
-      student.setStudent_gender((String)map.get("性别"));
+	public void parseExcel(MultipartFile file) {
+		String fileName = file.getOriginalFilename();
+		String[] columns = { "编号", "学号", "姓名", "班级", "性别" };
+		InputStream is = null;
+		try {
+			is = file.getInputStream();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		List<Map<String, String>> list = ExcelUtil.parseExcel(fileName, is, columns);
+		List<StudentDO> studentList = new ArrayList();
+		for (Map<String, String> map : list) {
+			StudentDO student = new StudentDO();
+			student.setStudent_id((String) map.get("学号"));
+			student.setStudent_name((String) map.get("姓名"));
+			student.setStudent_class((String) map.get("班级"));
+			student.setStudent_gender((String) map.get("性别"));
 
-      studentList.add(student);
-    }
+			studentList.add(student);
+		}
 
-    this.studentDao.insertStudent(studentList);
-  }
+		this.studentDao.insertStudent(studentList);
+	}
 }
