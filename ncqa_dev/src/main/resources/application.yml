@@ -1,0 +1,12 @@
+server:
+  port: 8082
+  
+spring:
+  datasource:
+    url: jdbc:mysql://139.199.170.177:3306/ncqa_dev
+    username: root
+    password: xuxiao123
+    driver-class-name: com.mysql.jdbc.Driver
+
+mybatis:
+  mapper-locations: classpath*:config/mybatis/mapper/*.xml

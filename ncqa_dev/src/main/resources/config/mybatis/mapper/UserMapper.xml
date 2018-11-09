@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.neusoft.xuxiao.dao.inf.IUserDao">
+	<select id="insertQuestion" parameterType="java.lang.String"
+		resultType="cn.neusoft.xuxiao.dao.entity.UserInfo">
+		select
+		*
+		from
+		wx_user
+		where open_id = #{openId}
+	</select>
+	<select id="findUserById" parameterType="int" resultType="cn.neusoft.xuxiao.dao.entity.UserInfo">
+		select
+		*
+		from
+		wx_user
+		where id=#{id}
+	</select>
+	<select id="findUserByOpenId" parameterType="java.lang.String" resultType="cn.neusoft.xuxiao.dao.entity.UserInfo">
+		select
+		*
+		from
+		wx_user
+		where open_id=#{openId}
+	</select>
+	<insert id="insertAndgetkey" parameterType="java.lang.String">
+		<selectKey keyProperty="id" order="AFTER" resultType="java.lang.Integer">
+			SELECT LAST_INSERT_ID()
+		</selectKey>
+		insert
+		into
+		wx_user(open_id)
+		values
+		(#{userId})
+	</insert>
+	<select id="findStudentById" parameterType="java.lang.String" resultType="cn.neusoft.xuxiao.dao.entity.StudentDO">
+		select
+		*
+		from
+		student
+		where
+		student_id=#{student_id}
+	</select>
+	<update id="updateUserInfoById" parameterType="cn.neusoft.xuxiao.dao.entity.UserInfo">
+		update 
+		wx_user
+		<trim prefix="SET" suffixOverrides=",">
+			<if test="username != null">
+				username = #{username, jdbcType=VARCHAR},
+			</if>
+			<if test="sex != null">
+				sex = #{sex, jdbcType=VARCHAR},
+			</if>
+			<if test="region != null">
+				region = #{region, jdbcType=VARCHAR},
+			</if>
+			<if test="head_url != null">
+				head_url = #{head_url, jdbcType=VARCHAR},
+			</if>
+		</trim>
+		where id=#{id}
+	</update>
+	<update id="bindStudentInfo">
+		update
+		wx_user
+		set
+		student_id = #{student_id}
+		where id = #{id}
+	</update>
+	
+	<select id="getQuestionCountByBaseId" parameterType="int">
+		select
+		count
+		from
+		question
+		where
+		question_base_id = #{question_base_id}		
+	</select>
+	
+	<select id="getAdminByUsername" parameterType="java.lang.String" resultType="cn.neusoft.xuxiao.dao.entity.Admin">
+		select 
+		*
+		from
+		admin
+		where
+		username=#{username}
+	</select>
+	
+	<insert id="insertUserByOpenId" parameterType="java.lang.String">
+		insert into
+		wx_user(open_id)
+		values(#{openId})
+	</insert>
+</mapper>

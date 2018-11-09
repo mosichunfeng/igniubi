@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.neusoft.xuxiao.dao.inf.IQuestionDao">
+	<insert id ="insertQuestion" parameterType="java.util.List" useGeneratedKeys="true" keyProperty="id">
+		insert into 
+			question(
+				question_base_id,
+				question_index,
+				select_type,
+				content
+				)
+				values
+		<foreach collection="list" item="question" separator=",">
+		(
+			#{question.question_base_id},
+			#{question.question_index},
+            #{question.select_type},
+            #{question.content}
+		)
+		</foreach>
+	</insert>
+	<insert id = "insertAnswer" parameterType="java.util.List">
+		insert into 
+			answer(
+				question_id,
+				answer_index,
+				answer_content
+			  )
+			  values	   
+	   <foreach collection="list" item="answer" separator=",">
+		(
+			#{answer.question_id},
+            #{answer.answer_index},
+            #{answer.answer_content}
+		)
+		</foreach>
+	</insert>
+	<insert id = "insertRightAnswer" parameterType="java.util.List">
+		insert into 
+		right_answer(
+				question_id,
+				answer_index,
+				answer_content
+				)
+				values
+		<foreach collection="list" item="right_answer" separator=",">
+		(
+			#{right_answer.question_id},
+			#{right_answer.answer_index},
+            #{right_answer.answer_content}
+		)
+		</foreach>
+	</insert>
+</mapper>
