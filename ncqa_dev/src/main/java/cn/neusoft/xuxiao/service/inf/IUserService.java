@@ -12,19 +12,18 @@ import cn.neusoft.xuxiao.webapi.entity.QueryUserInfoRequest;
 import cn.neusoft.xuxiao.webapi.entity.SubmitContentRequest;
 import java.util.List;
 
-public abstract interface IUserService
-{
-  public abstract GetSessionKeyAndOpenIdResponse getSessionKeyAndOropenid(String paramString);
+public abstract interface IUserService{
+  public abstract GetSessionKeyAndOpenIdResponse getSessionKeyAndOropenid(String code);
 
-  public abstract BindStudentInfoResponse bindStudentInfo(BindStudentInfoRequest paramBindStudentInfoRequest);
+  public  BindStudentInfoResponse bindStudentInfo(BindStudentInfoRequest reqMsg);
 
-  public abstract UserInfo bindUserInfo(BindUserInfoRequest paramBindUserInfoRequest);
+  public  UserInfo bindUserInfo(BindUserInfoRequest reqMsg);
 
-  public abstract UserInfo getUserInfo(QueryUserInfoRequest paramQueryUserInfoRequest);
+  public  UserInfo getUserInfo(String id);
 
-  public abstract List<UserAnswerHistoryDO> getAnswerHistory(QueryUserAnserHistoryRequest paramQueryUserAnserHistoryRequest);
+  public  List<UserAnswerHistoryDO> getAnswerHistory(QueryUserAnserHistoryRequest reqMsg);
 
-  public abstract void submitContent(SubmitContentRequest paramSubmitContentRequest);
+  public  void submitContent(SubmitContentRequest reqMsg);
 
-  public abstract AdminLoginResult adminLogin(String paramString1, String paramString2);
+  public  AdminLoginResult adminLogin(String username, String password);
 }
