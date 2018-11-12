@@ -48,7 +48,7 @@ public class UserController extends BaseController {
 		return createResponse(result, ServiceResponseCode.OK);
 	}
 
-	@RequestMapping("user/getUserInfoAndBase")
+	@RequestMapping("/user/getUserInfoAndBase")
 	public String getUserInfoAndBase(String id){
 		UserInfoAndBaseDO result = userService.getUserInfoAndBase(id);
 		return createResponse(result, ServiceResponseCode.OK);
