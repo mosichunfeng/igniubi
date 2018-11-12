@@ -69,4 +69,19 @@
 		and
 			question_base_id = #{base_id}
 	</select>
+	
+	<select id="insertActivityCode" parameterType="cn.neusoft.xuxiao.dao.entity.ActivityCodeDO">
+		insert into
+			activity_code(user_id,code,question_base_id)
+		values(#{user_id},#{code},#{question_base_id})
+	</select>
+	
+	<select id="getQuestionBaseById" resultType="cn.neusoft.xuxiao.dao.entity.QuestionBase">
+		select
+			*
+		from 
+			question_base
+		where
+			id=#{id}
+	</select>
 </mapper>

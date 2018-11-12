@@ -1,6 +1,8 @@
 package cn.neusoft.xuxiao.service.impl;
 
+import cn.neusoft.xuxiao.constants.ActivityCodeConstants;
 import cn.neusoft.xuxiao.constants.ServiceResponseCode;
+import cn.neusoft.xuxiao.dao.entity.ActivityCodeDO;
 import cn.neusoft.xuxiao.dao.entity.Admin;
 import cn.neusoft.xuxiao.dao.entity.QuestionBase;
 import cn.neusoft.xuxiao.dao.entity.StudentDO;
@@ -20,11 +22,10 @@ import cn.neusoft.xuxiao.webapi.entity.AdminLoginResult;
 import cn.neusoft.xuxiao.webapi.entity.BindStudentInfoRequest;
 import cn.neusoft.xuxiao.webapi.entity.BindStudentInfoResponse;
 import cn.neusoft.xuxiao.webapi.entity.BindUserInfoRequest;
+import cn.neusoft.xuxiao.webapi.entity.EnsureJoinResponse;
 import cn.neusoft.xuxiao.webapi.entity.GetSessionKeyAndOpenIdResponse;
 import cn.neusoft.xuxiao.webapi.entity.QueryUserAnserHistoryRequest;
-import cn.neusoft.xuxiao.webapi.entity.QueryUserInfoRequest;
 import cn.neusoft.xuxiao.webapi.entity.SubmitContentRequest;
-import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -145,9 +146,9 @@ public class UserServiceImpl implements IUserService {
 		result.setId(Integer.parseInt(id));
 		result.setStudent_id(student.getStudent_id());
 		result.setStudent_name(student.getStudent_name());
-		
+
 		List<QuestionBase> list = new ArrayList<QuestionBase>();
-		
+
 		List<QuestionBase> allQuestionBase = questionDao.getAllQuestionBase();
 		if (allQuestionBase != null) {
 			for (QuestionBase questionBase : allQuestionBase) {
@@ -181,11 +182,33 @@ public class UserServiceImpl implements IUserService {
 	}
 
 	@Override
-	public BindStudentInfoResponse ensureJoin(String user_id, String base_id) {
+	public EnsureJoinResponse ensureJoin(String user_id, String base_id) {
 		ValidationUtils.checkNotEmpty(user_id, "用户id不能为空");
 		ValidationUtils.checkNotEmpty(base_id, "题库id不能为空");
+
+		// 判断活动是否过期
+		QuestionBase base = questionDao.getQuestionBaseById(Integer.parseInt(base_id));
+		if (!isAvalid(base.getEnd_time())) {
+			throw new BusinessException(String.valueOf(ServiceResponseCode.BUSINESS_EXCEPTION), "活动已经结束！无法报名！");
+		}
 		
+		ActivityCodeDO activityCode = questionDao.getActivityCode(Integer.parseInt(user_id), Integer.parseInt(base_id));
 		
-		return null;
+		EnsureJoinResponse response = new EnsureJoinResponse();
+		if (activityCode == null) {
+			String code = user_id + ActivityCodeConstants.MIDSINGNAL
+					+ base_id;
+			ActivityCodeDO activity = new ActivityCodeDO();
+			activity.setUser_id(Integer.valueOf(user_id));
+			activity.setQuestion_base_id(Integer.valueOf(base_id));
+			activity.setCode(code);
+			questionDao.insertActivityCode(activity);
+			response.setActivity_code(code);
+			response.setJoined(false);
+		}else{
+			response.setActivity_code(activityCode.getCode());
+			response.setJoined(true);
+		}
+		return response;
 	}
 }

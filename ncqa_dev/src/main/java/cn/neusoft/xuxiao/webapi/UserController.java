@@ -10,6 +10,7 @@ import cn.neusoft.xuxiao.webapi.entity.AdminLoginResult;
 import cn.neusoft.xuxiao.webapi.entity.BindStudentInfoRequest;
 import cn.neusoft.xuxiao.webapi.entity.BindStudentInfoResponse;
 import cn.neusoft.xuxiao.webapi.entity.BindUserInfoRequest;
+import cn.neusoft.xuxiao.webapi.entity.EnsureJoinResponse;
 import cn.neusoft.xuxiao.webapi.entity.GetSessionKeyAndOpenIdResponse;
 import cn.neusoft.xuxiao.webapi.entity.QueryUserAnserHistoryRequest;
 import cn.neusoft.xuxiao.webapi.entity.SubmitContentRequest;
@@ -56,7 +57,8 @@ public class UserController extends BaseController {
 	
 	@RequestMapping("/user/ensureJoin")
 	public String ensureJoin(String user_id,String base_id){
-		return null;
+		EnsureJoinResponse result = userService.ensureJoin(user_id, base_id);
+		return createResponse(result, ServiceResponseCode.OK);
 	}
 	
 	@RequestMapping("/user/startAnswerQuestion")

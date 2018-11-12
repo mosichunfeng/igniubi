@@ -7,6 +7,7 @@ import cn.neusoft.xuxiao.webapi.entity.AdminLoginResult;
 import cn.neusoft.xuxiao.webapi.entity.BindStudentInfoRequest;
 import cn.neusoft.xuxiao.webapi.entity.BindStudentInfoResponse;
 import cn.neusoft.xuxiao.webapi.entity.BindUserInfoRequest;
+import cn.neusoft.xuxiao.webapi.entity.EnsureJoinResponse;
 import cn.neusoft.xuxiao.webapi.entity.GetSessionKeyAndOpenIdResponse;
 import cn.neusoft.xuxiao.webapi.entity.QueryUserAnserHistoryRequest;
 import cn.neusoft.xuxiao.webapi.entity.SubmitContentRequest;
@@ -29,5 +30,5 @@ public abstract interface IUserService{
 
   public  AdminLoginResult adminLogin(String username, String password);
   
-  public BindStudentInfoResponse ensureJoin(String user_id,String base_id);
+  public  EnsureJoinResponse ensureJoin(String user_id,String base_id);
 }

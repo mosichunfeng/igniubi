@@ -22,4 +22,8 @@ public abstract interface IQuestionDao {
 	public abstract List<QuestionBase> getAllQuestionBase();
 	
 	public abstract ActivityCodeDO getActivityCode(@Param("user_id") int user_id, @Param("base_id") int base_id);
+	
+	public abstract void insertActivityCode(ActivityCodeDO activityDO);
+	
+	public abstract QuestionBase getQuestionBaseById(int id);
 }
