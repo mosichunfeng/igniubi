@@ -1,14 +1,19 @@
 package cn.neusoft.xuxiao.service.impl;
 
+import cn.neusoft.xuxiao.constants.ServiceResponseCode;
 import cn.neusoft.xuxiao.dao.entity.Admin;
+import cn.neusoft.xuxiao.dao.entity.QuestionBase;
 import cn.neusoft.xuxiao.dao.entity.StudentDO;
 import cn.neusoft.xuxiao.dao.entity.UserAnswerHistoryDO;
 import cn.neusoft.xuxiao.dao.entity.UserInfo;
+import cn.neusoft.xuxiao.dao.entity.UserInfoAndBaseDO;
+import cn.neusoft.xuxiao.dao.inf.IQuestionDao;
 import cn.neusoft.xuxiao.dao.inf.IUserDao;
 import cn.neusoft.xuxiao.exception.BusinessException;
 import cn.neusoft.xuxiao.service.inf.IUserService;
 import cn.neusoft.xuxiao.utils.Base64Utils;
 import cn.neusoft.xuxiao.utils.StringUtil;
+import cn.neusoft.xuxiao.utils.TimeTool;
 import cn.neusoft.xuxiao.utils.ValidationUtils;
 import cn.neusoft.xuxiao.utils.WxApplicationDecoder;
 import cn.neusoft.xuxiao.webapi.entity.AdminLoginResult;
@@ -20,6 +25,7 @@ import cn.neusoft.xuxiao.webapi.entity.QueryUserAnserHistoryRequest;
 import cn.neusoft.xuxiao.webapi.entity.QueryUserInfoRequest;
 import cn.neusoft.xuxiao.webapi.entity.SubmitContentRequest;
 import java.io.PrintStream;
+import java.util.Date;
 import java.util.List;
 import javax.annotation.Resource;
 import org.springframework.stereotype.Service;
@@ -30,6 +36,9 @@ public class UserServiceImpl implements IUserService {
 
 	@Resource(name = "IUserDao")
 	private IUserDao userDao;
+	
+	@Resource(name = "IQuestionDao")
+	private IQuestionDao questionDao;
 
 	@Transactional
 	public GetSessionKeyAndOpenIdResponse getSessionKeyAndOropenid(String code) {
@@ -88,7 +97,11 @@ public class UserServiceImpl implements IUserService {
 
 	public UserInfo getUserInfo(String id) {
 		ValidationUtils.checkNotEmpty(id, "用户id不能为空");
-		return null;
+		UserInfo userInfo =  userDao.findUserById(Integer.parseInt(id));
+		if(userInfo == null){
+			throw new BusinessException(String.valueOf(ServiceResponseCode.BUSINESS_EXCEPTION), "无此用户");
+		}
+		return userInfo;
 	}
 
 	public List<UserAnswerHistoryDO> getAnswerHistory(QueryUserAnserHistoryRequest reqMsg) {
@@ -118,5 +131,46 @@ public class UserServiceImpl implements IUserService {
 		result.setUsername(orgin.getUsername());
 		result.setPassword(orgin.getPassword());
 		return result;
+	}
+
+	@Override
+	public UserInfoAndBaseDO getUserInfoAndBase(String id) {
+		ValidationUtils.checkNotEmpty(id, "用户id不能为空");
+		StudentDO student = userDao.findStudentByUid(Integer.parseInt(id));
+		if(student == null){
+			throw new BusinessException(String.valueOf(ServiceResponseCode.BUSINESS_EXCEPTION), "无此学生");
+		}
+		UserInfoAndBaseDO result = new UserInfoAndBaseDO();
+		result.setId(Integer.parseInt(id));
+		result.setStudent_id(student.getStudent_id());
+		result.setStudent_name(student.getStudent_name());
+
+		List<QuestionBase> allQuestionBase = questionDao.getAllQuestionBase();
+		
+		for(QuestionBase questionBase : allQuestionBase){
+			if(isAvalid(questionBase.getEnd_time())){
+				result.getBase().add(questionBase);
+			}
+		}
+		return result;
+	}
+	/**
+	 * 计算时间差值
+	 * 
+	 * @return 相差小时数
+	 * @date 2018年10月12日 下午4:08:07
+	 * @author hepei
+	 */
+	private boolean isAvalid(String endtime) {
+		if(StringUtil.isEmpty(endtime)){
+			return false;
+		}
+		boolean avalid = true;
+		Date endDate = TimeTool.StrToDate(endtime);
+		long interval = new Date().getTime() - endDate.getTime();
+		if(interval < 0){
+			return false;
+		}
+		return avalid;
 	}
 }

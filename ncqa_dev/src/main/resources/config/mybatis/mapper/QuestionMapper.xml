@@ -51,4 +51,11 @@
 		)
 		</foreach>
 	</insert>
+	
+	<select id="getAllQuestionBase" resultType="QuestionBase">
+		select 
+			*
+		from
+			question_base	
+	</select>
 </mapper>

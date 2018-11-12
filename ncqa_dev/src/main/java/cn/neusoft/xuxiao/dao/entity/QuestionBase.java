@@ -7,4 +7,6 @@ public class QuestionBase {
 	private int id;
 	private String name;
 	private String description;
+	private String start_time;
+	private String end_time;
 }
