@@ -25,6 +25,7 @@ import cn.neusoft.xuxiao.webapi.entity.QueryUserAnserHistoryRequest;
 import cn.neusoft.xuxiao.webapi.entity.QueryUserInfoRequest;
 import cn.neusoft.xuxiao.webapi.entity.SubmitContentRequest;
 import java.io.PrintStream;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import javax.annotation.Resource;
@@ -36,7 +37,7 @@ public class UserServiceImpl implements IUserService {
 
 	@Resource(name = "IUserDao")
 	private IUserDao userDao;
-	
+
 	@Resource(name = "IQuestionDao")
 	private IQuestionDao questionDao;
 
@@ -97,8 +98,8 @@ public class UserServiceImpl implements IUserService {
 
 	public UserInfo getUserInfo(String id) {
 		ValidationUtils.checkNotEmpty(id, "用户id不能为空");
-		UserInfo userInfo =  userDao.findUserById(Integer.parseInt(id));
-		if(userInfo == null){
+		UserInfo userInfo = userDao.findUserById(Integer.parseInt(id));
+		if (userInfo == null) {
 			throw new BusinessException(String.valueOf(ServiceResponseCode.BUSINESS_EXCEPTION), "无此用户");
 		}
 		return userInfo;
@@ -137,23 +138,28 @@ public class UserServiceImpl implements IUserService {
 	public UserInfoAndBaseDO getUserInfoAndBase(String id) {
 		ValidationUtils.checkNotEmpty(id, "用户id不能为空");
 		StudentDO student = userDao.findStudentByUid(Integer.parseInt(id));
-		if(student == null){
+		if (student == null) {
 			throw new BusinessException(String.valueOf(ServiceResponseCode.BUSINESS_EXCEPTION), "无此学生");
 		}
 		UserInfoAndBaseDO result = new UserInfoAndBaseDO();
 		result.setId(Integer.parseInt(id));
 		result.setStudent_id(student.getStudent_id());
 		result.setStudent_name(student.getStudent_name());
-
-		List<QuestionBase> allQuestionBase = questionDao.getAllQuestionBase();
 		
-		for(QuestionBase questionBase : allQuestionBase){
-			if(isAvalid(questionBase.getEnd_time())){
-				result.getBase().add(questionBase);
+		List<QuestionBase> list = new ArrayList<QuestionBase>();
+		
+		List<QuestionBase> allQuestionBase = questionDao.getAllQuestionBase();
+		if (allQuestionBase != null) {
+			for (QuestionBase questionBase : allQuestionBase) {
+				if (isAvalid(questionBase.getEnd_time())) {
+					list.add(questionBase);
+				}
 			}
 		}
+		result.setBase(list);
 		return result;
 	}
+
 	/**
 	 * 计算时间差值
 	 * 
@@ -162,13 +168,13 @@ public class UserServiceImpl implements IUserService {
 	 * @author hepei
 	 */
 	private boolean isAvalid(String endtime) {
-		if(StringUtil.isEmpty(endtime)){
+		if (StringUtil.isEmpty(endtime)) {
 			return false;
 		}
 		boolean avalid = true;
 		Date endDate = TimeTool.StrToDate(endtime);
 		long interval = new Date().getTime() - endDate.getTime();
-		if(interval < 0){
+		if (interval < 0) {
 			return false;
 		}
 		return avalid;
