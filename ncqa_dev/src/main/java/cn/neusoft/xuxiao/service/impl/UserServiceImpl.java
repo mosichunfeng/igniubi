@@ -171,11 +171,11 @@ public class UserServiceImpl implements IUserService {
 		if (StringUtil.isEmpty(endtime)) {
 			return false;
 		}
-		boolean avalid = true;
+		boolean avalid = false;
 		Date endDate = TimeTool.StrToDate(endtime);
 		long interval = new Date().getTime() - endDate.getTime();
 		if (interval < 0) {
-			return false;
+			return true;
 		}
 		return avalid;
 	}
