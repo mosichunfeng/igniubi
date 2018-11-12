@@ -1,6 +1,6 @@
 package cn.neusoft.xuxiao.webapi.entity;
 
-public class SubmitContentResponse
+public class SubmitContentResponse extends BaseResponse
 {
 
 }

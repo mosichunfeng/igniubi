@@ -53,6 +53,12 @@ public class UserController extends BaseController {
 		UserInfoAndBaseDO result = userService.getUserInfoAndBase(id);
 		return createResponse(result, ServiceResponseCode.OK);
 	}
+	
+	@RequestMapping("/user/ensureJoin")
+	public String ensureJoin(String user_id,String base_id){
+		return null;
+	}
+	
 	@RequestMapping("/user/startAnswerQuestion")
 	public String startAnswerQuestion() {
 		return null;

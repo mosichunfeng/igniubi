@@ -70,6 +70,10 @@ public final class ServiceResponseCode {
 	 */
 	public static final int BUSINESS_EXCEPTION = 201;
 	/**
+	 * 已经报名
+	 */
+	public static final int HAVEJOIN_EXCEPTION = 202;
+	/**
 	 * 无查看记录权限.
 	 */
 	public static final int NO_VIEW_RECORD_PERMISSION = 424;

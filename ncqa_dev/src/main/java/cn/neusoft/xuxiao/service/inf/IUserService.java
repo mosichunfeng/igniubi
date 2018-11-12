@@ -28,4 +28,6 @@ public abstract interface IUserService{
   public  void submitContent(SubmitContentRequest reqMsg);
 
   public  AdminLoginResult adminLogin(String username, String password);
+  
+  public BindStudentInfoResponse ensureJoin(String user_id,String base_id);
 }

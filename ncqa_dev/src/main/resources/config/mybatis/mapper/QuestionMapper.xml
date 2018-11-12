@@ -58,4 +58,15 @@
 		from
 			question_base	
 	</select>
+	
+	<select id="getActivityCode" resultType="cn.neusoft.xuxiao.dao.entity.ActivityCodeDO">
+		select 
+			*
+		from
+			activity_code
+		where
+			user_id = #{user_id}
+		and
+			question_base_id = #{base_id}
+	</select>
 </mapper>

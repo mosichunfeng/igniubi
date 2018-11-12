@@ -179,4 +179,13 @@ public class UserServiceImpl implements IUserService {
 		}
 		return avalid;
 	}
+
+	@Override
+	public BindStudentInfoResponse ensureJoin(String user_id, String base_id) {
+		ValidationUtils.checkNotEmpty(user_id, "用户id不能为空");
+		ValidationUtils.checkNotEmpty(base_id, "题库id不能为空");
+		
+		
+		return null;
+	}
 }

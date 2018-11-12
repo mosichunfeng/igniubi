@@ -9,16 +9,14 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 @RestController
-public class StudentController
-{
+public class StudentController {
 
-  @Resource(name="iStudentServiceImpl")
-  private IStudentService studentService;
+	@Resource(name = "iStudentServiceImpl")
+	private IStudentService studentService;
 
-  @RequestMapping({"/import"})
-  public String importStudentFromExcel(HttpServletRequest request, @RequestParam("proxyfile") MultipartFile file)
-  {
-    this.studentService.parseExcel(file);
-    return "ok";
-  }
+	@RequestMapping({ "/import" })
+	public String importStudentFromExcel(HttpServletRequest request, @RequestParam("proxyfile") MultipartFile file) {
+		this.studentService.parseExcel(file);
+		return "ok";
+	}
 }
