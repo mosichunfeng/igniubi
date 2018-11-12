@@ -52,7 +52,7 @@
 		</foreach>
 	</insert>
 	
-	<select id="getAllQuestionBase" resultType="QuestionBase">
+	<select id="getAllQuestionBase" resultType="cn.neusoft.xuxiao.dao.entity.QuestionBase">
 		select 
 			*
 		from
