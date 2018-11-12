@@ -8,7 +8,6 @@ import java.util.TimeZone;
 
 import org.springframework.stereotype.Component;
 
-
 @Component
 public class TimeTool {
 
