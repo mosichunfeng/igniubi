@@ -85,7 +85,7 @@
 			id=#{id}
 	</select>
 	
-	<select id="findExamHistoryById" resultType="cn.neusoft.xuxiao.dao.entity.ExamDO">
+	<select id="findExamHistoryByCode" resultType="cn.neusoft.xuxiao.dao.entity.ExamDO">
 		select 
 			*
 		from
