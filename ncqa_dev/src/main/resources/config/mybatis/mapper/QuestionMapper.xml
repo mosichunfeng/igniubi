@@ -115,6 +115,6 @@
 		from
 			answer
 		where
-			question = #{question_id}
+			question_id = #{question_id}
 	</select>
 </mapper>
