@@ -13,6 +13,7 @@ import cn.neusoft.xuxiao.webapi.entity.BindUserInfoRequest;
 import cn.neusoft.xuxiao.webapi.entity.EnsureJoinResponse;
 import cn.neusoft.xuxiao.webapi.entity.GetSessionKeyAndOpenIdResponse;
 import cn.neusoft.xuxiao.webapi.entity.QueryUserAnserHistoryRequest;
+import cn.neusoft.xuxiao.webapi.entity.StartAnswerQuestionResponse;
 import cn.neusoft.xuxiao.webapi.entity.SubmitContentRequest;
 import java.util.List;
 import javax.annotation.Resource;
@@ -62,8 +63,9 @@ public class UserController extends BaseController {
 	}
 	
 	@RequestMapping("/user/startAnswerQuestion")
-	public String startAnswerQuestion() {
-		return null;
+	public String startAnswerQuestion(String user_id,String code) {
+		StartAnswerQuestionResponse result = userService.startAnswerQuestion(user_id, code);
+		return createResponse(result, ServiceResponseCode.OK);
 	}
 
 	@RequestMapping("/user/submitContent")
