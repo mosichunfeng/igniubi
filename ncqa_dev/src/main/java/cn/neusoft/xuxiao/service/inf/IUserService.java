@@ -10,6 +10,7 @@ import cn.neusoft.xuxiao.webapi.entity.BindUserInfoRequest;
 import cn.neusoft.xuxiao.webapi.entity.EnsureJoinResponse;
 import cn.neusoft.xuxiao.webapi.entity.GetSessionKeyAndOpenIdResponse;
 import cn.neusoft.xuxiao.webapi.entity.QueryUserAnserHistoryRequest;
+import cn.neusoft.xuxiao.webapi.entity.StartAnswerQuestionResponse;
 import cn.neusoft.xuxiao.webapi.entity.SubmitContentRequest;
 import java.util.List;
 
@@ -31,4 +32,6 @@ public abstract interface IUserService{
   public  AdminLoginResult adminLogin(String username, String password);
   
   public  EnsureJoinResponse ensureJoin(String user_id,String base_id);
+
+  public  StartAnswerQuestionResponse startAnswerQuestion(String user_id, String code);
 }

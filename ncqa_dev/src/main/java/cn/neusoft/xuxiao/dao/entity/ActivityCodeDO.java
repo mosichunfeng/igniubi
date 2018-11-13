@@ -9,4 +9,5 @@ public class ActivityCodeDO {
 	private int user_id;
 	private int question_base_id;
 	private String code;
+	private String time;
 }

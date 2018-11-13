@@ -2,6 +2,7 @@ package cn.neusoft.xuxiao.dao.inf;
 
 import cn.neusoft.xuxiao.dao.entity.ActivityCodeDO;
 import cn.neusoft.xuxiao.dao.entity.Answer;
+import cn.neusoft.xuxiao.dao.entity.ExamDO;
 import cn.neusoft.xuxiao.dao.entity.Question;
 import cn.neusoft.xuxiao.dao.entity.QuestionBase;
 import cn.neusoft.xuxiao.dao.entity.RightAnswer;
@@ -26,4 +27,12 @@ public abstract interface IQuestionDao {
 	public abstract void insertActivityCode(ActivityCodeDO activityDO);
 	
 	public abstract QuestionBase getQuestionBaseById(int id);
+
+	public abstract ExamDO findExamHistoryByCode(String code);
+	
+	public abstract void insertExamHistory(ExamDO examDO);
+	
+	public abstract List<Question> findQuestionListByBaseId(int base_id);
+	
+	public abstract List<Answer> findAnswerListByQuestionId(int question_id);
 }

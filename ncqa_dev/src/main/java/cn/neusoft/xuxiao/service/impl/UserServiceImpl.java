@@ -1,9 +1,13 @@
 package cn.neusoft.xuxiao.service.impl;
 
 import cn.neusoft.xuxiao.constants.ActivityCodeConstants;
+import cn.neusoft.xuxiao.constants.ExamConstants;
 import cn.neusoft.xuxiao.constants.ServiceResponseCode;
 import cn.neusoft.xuxiao.dao.entity.ActivityCodeDO;
 import cn.neusoft.xuxiao.dao.entity.Admin;
+import cn.neusoft.xuxiao.dao.entity.Answer;
+import cn.neusoft.xuxiao.dao.entity.ExamDO;
+import cn.neusoft.xuxiao.dao.entity.Question;
 import cn.neusoft.xuxiao.dao.entity.QuestionBase;
 import cn.neusoft.xuxiao.dao.entity.StudentDO;
 import cn.neusoft.xuxiao.dao.entity.UserAnswerHistoryDO;
@@ -25,6 +29,7 @@ import cn.neusoft.xuxiao.webapi.entity.BindUserInfoRequest;
 import cn.neusoft.xuxiao.webapi.entity.EnsureJoinResponse;
 import cn.neusoft.xuxiao.webapi.entity.GetSessionKeyAndOpenIdResponse;
 import cn.neusoft.xuxiao.webapi.entity.QueryUserAnserHistoryRequest;
+import cn.neusoft.xuxiao.webapi.entity.StartAnswerQuestionResponse;
 import cn.neusoft.xuxiao.webapi.entity.SubmitContentRequest;
 import java.util.ArrayList;
 import java.util.Date;
@@ -68,6 +73,7 @@ public class UserServiceImpl implements IUserService {
 		return result;
 	}
 
+	@Transactional
 	public BindStudentInfoResponse bindStudentInfo(BindStudentInfoRequest reqMsg) {
 		ValidationUtils.checkNotEmpty(Integer.valueOf(reqMsg.getId()), "用户id不能为空");
 		ValidationUtils.checkNotEmpty(reqMsg.getStudent_id(), "学号不能为空");
@@ -85,6 +91,7 @@ public class UserServiceImpl implements IUserService {
 		return result;
 	}
 
+	@Transactional
 	public UserInfo bindUserInfo(BindUserInfoRequest reqMsg) {
 		ValidationUtils.checkNotEmpty(Integer.valueOf(reqMsg.getId()), "用户id不能为空");
 		UserInfo userInfo = new UserInfo();
@@ -97,6 +104,7 @@ public class UserServiceImpl implements IUserService {
 		return this.userDao.findUserById(userInfo.getId());
 	}
 
+	@Transactional
 	public UserInfo getUserInfo(String id) {
 		ValidationUtils.checkNotEmpty(id, "用户id不能为空");
 		UserInfo userInfo = userDao.findUserById(Integer.parseInt(id));
@@ -120,6 +128,7 @@ public class UserServiceImpl implements IUserService {
 			throw new BusinessException(String.valueOf(409), "答案个数不匹配");
 	}
 
+	@Transactional
 	public AdminLoginResult adminLogin(String username, String password) {
 		ValidationUtils.checkNotEmpty(username, "用户名不能为空");
 		ValidationUtils.checkNotEmpty(password, "密码不能为空");
@@ -136,6 +145,7 @@ public class UserServiceImpl implements IUserService {
 	}
 
 	@Override
+	@Transactional
 	public UserInfoAndBaseDO getUserInfoAndBase(String id) {
 		ValidationUtils.checkNotEmpty(id, "用户id不能为空");
 		StudentDO student = userDao.findStudentByUid(Integer.parseInt(id));
@@ -180,8 +190,18 @@ public class UserServiceImpl implements IUserService {
 		}
 		return avalid;
 	}
+	
+	private long caculateMinutes(String time) {
+		if (StringUtil.isEmpty(time)) {
+			throw new BusinessException(String.valueOf(ServiceResponseCode.BUSINESS_EXCEPTION), "服务器异常！请联系管理员!");
+		}
+		Date endDate = TimeTool.StrToDate(time);
+		long interval = new Date().getTime() - endDate.getTime();
+		return interval/60000;
+	}
 
 	@Override
+	@Transactional
 	public EnsureJoinResponse ensureJoin(String user_id, String base_id) {
 		ValidationUtils.checkNotEmpty(user_id, "用户id不能为空");
 		ValidationUtils.checkNotEmpty(base_id, "题库id不能为空");
@@ -202,6 +222,7 @@ public class UserServiceImpl implements IUserService {
 			activity.setUser_id(Integer.valueOf(user_id));
 			activity.setQuestion_base_id(Integer.valueOf(base_id));
 			activity.setCode(code);
+			activity.setTime(TimeTool.DateToString(new Date()));
 			questionDao.insertActivityCode(activity);
 			response.setActivity_code(code);
 			response.setJoined(false);
@@ -209,6 +230,65 @@ public class UserServiceImpl implements IUserService {
 			response.setActivity_code(activityCode.getCode());
 			response.setJoined(true);
 		}
+		return response;
+	}
+
+	@Override
+	@Transactional
+	public StartAnswerQuestionResponse startAnswerQuestion(String user_id, String code) {
+		ValidationUtils.checkNotEmpty(user_id, "用户id不能为空");
+		ValidationUtils.checkNotEmpty(code, "答题码不能为空");
+		if(!code.contains(ActivityCodeConstants.MIDSINGNAL)){
+			throw new BusinessException(String.valueOf(ServiceResponseCode.BUSINESS_EXCEPTION), "答题码格式错误");
+		}
+		String[] split = code.split(ActivityCodeConstants.MIDSINGNAL);
+		if(!split[0].equals(user_id)){
+			throw new BusinessException(String.valueOf(ServiceResponseCode.BUSINESS_EXCEPTION),"请不要帮别人答题！");
+		}
+		int uid = Integer.valueOf(user_id);
+		int base_id = Integer.valueOf(split[1]);
+
+		StartAnswerQuestionResponse response = new StartAnswerQuestionResponse();
+		
+		ExamDO examDO = questionDao.findExamHistoryByCode(code);
+		QuestionBase qb = questionDao.getQuestionBaseById(base_id);
+		List<Question> questionList = questionDao.findQuestionListByBaseId(base_id);
+		qb.setQuestion(questionList);
+		
+		for(Question question : questionList){
+			List<Answer> answerList = questionDao.findAnswerListByQuestionId(question.getId());
+			question.setAnswer_list(answerList);
+		}
+		
+		//开始答题
+		if(examDO == null){
+			examDO = new ExamDO();
+			examDO.setUser_id(uid);
+			examDO.setQuestion_base_id(Integer.valueOf(split[1]));
+			examDO.setActivity_code(code);
+			examDO.setStart_time(TimeTool.DateToString(new Date()));
+			examDO.setStatus(ExamConstants.STARTED);
+			questionDao.insertExamHistory(examDO);
+			
+			response.setUser_id(uid);
+			response.setLast_minutes(ExamConstants.ALL_EXAM_TIME);
+			response.setStatus(ExamConstants.STARTED);
+			response.setQuestion_base(qb);
+		}
+		else{
+			if(examDO.getStatus() == ExamConstants.FINISHED){
+				response.setUser_id(uid);
+				response.setStatus(ExamConstants.FINISHED);
+				response.setGrade(examDO.getGrade());
+			}else{
+				long minutes = caculateMinutes(examDO.getStart_time());
+				response.setUser_id(uid);
+				response.setLast_minutes(ExamConstants.ALL_EXAM_TIME-minutes);
+				response.setStatus(ExamConstants.STARTED);
+				response.setQuestion_base(qb);
+			}
+		}
+		
 		return response;
 	}
 }
