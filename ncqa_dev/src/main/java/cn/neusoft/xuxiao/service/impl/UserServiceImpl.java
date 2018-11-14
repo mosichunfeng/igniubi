@@ -134,13 +134,19 @@ public class UserServiceImpl implements IUserService {
 		ValidationUtils.checkNotEmpty(password, "密码不能为空");
 		AdminLoginResult result = new AdminLoginResult();
 		Admin orgin = this.userDao.getAdminByUsername(username);
-		ValidationUtils.checkNotEmpty(orgin, "无此用户");
-		if (!orgin.getPassword().equals(password)) {
-			throw new BusinessException(String.valueOf(402), "密码错误");
+		if(null == orgin){
+			result.setCode(ServiceResponseCode.NO_THIS_USER);
+			result.setRemark("无此用户！");
+		}else{
+			if (!orgin.getPassword().equals(password)) {
+				result.setCode(ServiceResponseCode.PASSWORD_ERROR);
+				result.setRemark("密码错误！");
+			}else{
+				result.setCode(ServiceResponseCode.OK);
+				result.setUsername(orgin.getUsername());
+				result.setRemark("登录成功");
+			}
 		}
-		result.setId(orgin.getId());
-		result.setUsername(orgin.getUsername());
-		result.setPassword(orgin.getPassword());
 		return result;
 	}
 

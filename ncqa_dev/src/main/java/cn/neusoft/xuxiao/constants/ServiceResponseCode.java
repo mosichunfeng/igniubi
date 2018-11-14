@@ -52,6 +52,17 @@ public final class ServiceResponseCode {
 	 * 无修改权限.
 	 */
 	public static final int NO_UPDATE_PERMISSION = 420;
+	
+	/**
+	 * 无此用户
+	 */
+	public static final int NO_THIS_USER = 421;
+	
+	/**
+	 * 密码错误
+	 */
+	public static final int PASSWORD_ERROR = 422;
+	
 	/***************** 非errorcode.properties中定义的常量 start  **********************/
 	/**
 	 * 服务器异常,只能用在全局异常捕获出,其他地方禁止使用,日志输出该状态码后会发送监控邮件.

@@ -69,12 +69,12 @@ public class ExcelUtil
     Workbook wb = null;
     Sheet sheet = null;
     Row row = null;
-    List list = null;
+    List<Map<String,String>> list = null;
     String cellData = null;
     wb = readExcel(fileName, inputStream);
     if (wb != null)
     {
-      list = new ArrayList();
+      list = new ArrayList<Map<String,String>>();
 
       sheet = wb.getSheetAt(0);
 
@@ -84,7 +84,7 @@ public class ExcelUtil
 
       int colnum = row.getPhysicalNumberOfCells();
       for (int i = 1; i < rownum; i++) {
-        Map map = new LinkedHashMap();
+    	Map<String,String> map = new LinkedHashMap<String,String>();
         row = sheet.getRow(i);
         if (row == null) break;
         for (int j = 0; j < colnum; j++) {

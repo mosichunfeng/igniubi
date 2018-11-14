@@ -2,6 +2,7 @@ package cn.neusoft.xuxiao.service.impl;
 
 import cn.neusoft.xuxiao.dao.entity.Answer;
 import cn.neusoft.xuxiao.dao.entity.Question;
+import cn.neusoft.xuxiao.dao.entity.QuestionBase;
 import cn.neusoft.xuxiao.dao.entity.RightAnswer;
 import cn.neusoft.xuxiao.dao.inf.IQuestionDao;
 import cn.neusoft.xuxiao.service.inf.IQuestionService;
@@ -9,7 +10,6 @@ import cn.neusoft.xuxiao.utils.ExcelUtil;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import javax.annotation.Resource;
@@ -80,7 +80,6 @@ public class QuestionServiceImpl implements IQuestionService {
 		}
 
 		questionDao.insertQuestion(questionList);
-
 		for (Question question1 : questionList) {
 			for (Answer answer : answerList)
 				if (answer.getQuestion_id() == question1.getQuestion_index())
@@ -88,5 +87,10 @@ public class QuestionServiceImpl implements IQuestionService {
 		}
 		this.questionDao.insertAnswer(answerList);
 		this.questionDao.insertRightAnswer(rightAnswerList);
+	}
+
+	@Override
+	public List<QuestionBase> getAllQuestionBase() {
+		return questionDao.getAllQuestionBase();
 	}
 }
