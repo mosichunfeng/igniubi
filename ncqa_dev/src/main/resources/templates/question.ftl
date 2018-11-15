@@ -11,25 +11,19 @@
     <th>问题编号</th>
     <th>问题内容</th>
     <th>选择类型</th>
-    <th>答案A</th>
-    <th>答案B</th>
-    <th>答案C</th>
-    <th>答案D</>
+    <th>选项A</th>
+    <th>选项B</th>
+    <th>选项C</th>
+    <th>选项D</th>
   </tr>
-  <#list result as base>
+  <#list result as question>
   <tr>
-    <td>${base.id}</td>
-    <td>${base.name}</td>
-    <td>${base.description}</td>
-    <td>${base.start_time}</td>
-    <td>${base.end_time}</td>
-    <td>
-   		<a href="http://www.baidu.com">查看</a>
-   		<a href="http://www.baidu.com">上传</a>
-    	<a href="http://www.baidu.com">修改</a>
-    	<a href="http://www.baidu.com">删除</a>
-    	<a href="http://www.baidu.com">导出</a>
-    </td>
+    <td>${question.id}</td>
+    <td>${question.content}</td>
+    <td>${question.select_type}</td>
+    <#list question.answer_list as answer>
+    	<td>${answer.answer_content}</td>
+    </#list>
   </tr>
   </#list>
 	</body>

@@ -93,4 +93,15 @@ public class QuestionServiceImpl implements IQuestionService {
 	public List<QuestionBase> getAllQuestionBase() {
 		return questionDao.getAllQuestionBase();
 	}
+
+	@Override
+	public List<Question> getAllQuestionByBaseId(int base_id) {
+		 List<Question> questionList = questionDao.findQuestionListByBaseId(base_id);
+		 
+		 for(Question question : questionList){
+			 List<Answer> answerList = questionDao.findAnswerListByQuestionId(question.getId());
+			 question.setAnswer_list(answerList);
+		 }
+		 return questionList;
+	}
 }

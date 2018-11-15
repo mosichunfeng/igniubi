@@ -1,5 +1,6 @@
 package cn.neusoft.xuxiao.webapi;
 
+import cn.neusoft.xuxiao.dao.entity.Question;
 import cn.neusoft.xuxiao.dao.entity.QuestionBase;
 import cn.neusoft.xuxiao.service.inf.IQuestionService;
 
@@ -55,7 +56,9 @@ public class QuesionController {
 	}
 	
 	@RequestMapping("/admin/getQuestionByBaseId")
-	public String getAllQuestionByBaseId(int base_id){
-		return null;
+	public String getAllQuestionByBaseId(int base_id,ModelMap map){
+		List<Question> result = questionService.getAllQuestionByBaseId(base_id);
+		map.put("result", result);
+		return "question";
 	}
 }

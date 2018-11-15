@@ -1,5 +1,7 @@
 package cn.neusoft.xuxiao.utils;
 
+import java.util.UUID;
+
 public class StringUtil
 {
   public static boolean isEmpty(String str)
@@ -15,4 +17,9 @@ public class StringUtil
 
     return (!isEmpty(arg0)) && (!isEmpty(arg1)) && (arg0.trim().equals(arg1.trim()));
   }
+  
+  
+	public static String getUUid(){
+		return UUID.randomUUID().toString().replace("-", "");
+	}
 }
