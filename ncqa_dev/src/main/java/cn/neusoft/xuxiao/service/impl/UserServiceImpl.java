@@ -80,6 +80,9 @@ public class UserServiceImpl implements IUserService {
 		ValidationUtils.checkNotEmpty(reqMsg.getStudent_name(), "姓名不能为空");
 		StudentDO student = this.userDao.findStudentById(reqMsg.getStudent_id());
 
+		if(null==student){
+			throw new BusinessException(String.valueOf(410), "学号输入错误！");
+		}
 		if (!reqMsg.getStudent_name().equals(student.getStudent_name())) {
 			throw new BusinessException(String.valueOf(409), "学号姓名不匹配");
 		}
@@ -88,6 +91,7 @@ public class UserServiceImpl implements IUserService {
 		result.setId(reqMsg.getId());
 		result.setStudent_id(reqMsg.getStudent_id());
 		result.setStudent_name(reqMsg.getStudent_name());
+		result.setStudent_gender(student.getStudent_gender());
 		return result;
 	}
 
