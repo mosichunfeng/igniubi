@@ -1,13 +1,12 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="cn.neusoft.xuxiao.dao.inf.IUserDao">
-	<select id="insertQuestion" parameterType="java.lang.String"
-		resultType="cn.neusoft.xuxiao.dao.entity.UserInfo">
+	<select id="findUserByStudentId" resultType="cn.neusoft.xuxiao.dao.entity.UserInfo">
 		select
 		*
 		from
 		wx_user
-		where open_id = #{openId}
+		where student_id=#{student_id}		
 	</select>
 	<select id="findUserById" parameterType="int" resultType="cn.neusoft.xuxiao.dao.entity.UserInfo">
 		select

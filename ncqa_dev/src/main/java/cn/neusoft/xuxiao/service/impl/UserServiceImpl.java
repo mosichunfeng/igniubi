@@ -79,7 +79,6 @@ public class UserServiceImpl implements IUserService {
 		ValidationUtils.checkNotEmpty(reqMsg.getStudent_id(), "学号不能为空");
 		ValidationUtils.checkNotEmpty(reqMsg.getStudent_name(), "姓名不能为空");
 		StudentDO student = this.userDao.findStudentById(reqMsg.getStudent_id());
-
 		if(null==student){
 			throw new BusinessException(String.valueOf(410), "学号输入错误！");
 		}

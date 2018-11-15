@@ -16,6 +16,7 @@ public abstract interface IUserDao {
 	public abstract UserInfo findUserByOpenId(String paramString);
 
 	public abstract Integer insertUserByOpenId(String paramString);
+	
 
 	public abstract void updateUserInfoById(UserInfo paramUserInfo);
 

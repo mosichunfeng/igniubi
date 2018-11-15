@@ -109,7 +109,7 @@ public class UserController extends BaseController {
 	
 	@RequestMapping("/user/savePhoto")
 	public void savePhoto(HttpServletRequest request,@RequestParam("proxyfile") MultipartFile file,String id) throws IOException{
-		String preffix = request.getServletContext().getRealPath("/");
+		String preffix = "/home/ubuntu/private/photo/";
 		String path = preffix+StringUtil.getUUid()+"_"+id+".jpg";
 		System.out.println(path);
 		File newFile = new File(path);
