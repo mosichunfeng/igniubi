@@ -21,6 +21,10 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
+
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 
@@ -89,7 +93,14 @@ public class UserController extends BaseController {
 	@RequestMapping("/user/submitContent")
 	@ResponseBody
 	public String submitContent(SubmitContentRequest reqMsg) {
-		this.userService.submitContent(reqMsg);
+		System.out.println(reqMsg.getQuestion_base_id());
+		System.out.println(reqMsg.getUser_id());
+		Map<Integer, String> map = reqMsg.getMap();
+		Set<Integer> keySet = map.keySet();
+		for(Integer key : keySet){
+			System.out.println("key : "+key+" value="+map.get(key));
+		}
+		//this.userService.submitContent(reqMsg);
 		return null;
 	}
 
@@ -113,7 +124,6 @@ public class UserController extends BaseController {
 		String path = preffix+StringUtil.getUUid()+"_"+id+".jpg";
 		System.out.println(path);
 		File newFile = new File(path);
-
 		file.transferTo(newFile);
 	}
 }
