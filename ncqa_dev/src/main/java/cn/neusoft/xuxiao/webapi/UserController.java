@@ -95,9 +95,9 @@ public class UserController extends BaseController {
 	public String submitContent(SubmitContentRequest reqMsg) {
 		System.out.println(reqMsg.getQuestion_base_id());
 		System.out.println(reqMsg.getUser_id());
-		Map<Integer, String> map = reqMsg.getMap();
-		Set<Integer> keySet = map.keySet();
-		for(Integer key : keySet){
+		Map<String, String> map = reqMsg.getMap();
+		Set<String> keySet = map.keySet();
+		for(String key : keySet){
 			System.out.println("key : "+key+" value="+map.get(key));
 		}
 		//this.userService.submitContent(reqMsg);
