@@ -127,8 +127,8 @@ public class UserServiceImpl implements IUserService {
 		ValidationUtils.checkNotEmpty(Integer.valueOf(reqMsg.getUser_id()), "题库id不能为空");
 
 		int count = this.userDao.getQuestionCountByBaseId(reqMsg.getQuestion_base_id());
-		if (count != reqMsg.getMap().size())
-			throw new BusinessException(String.valueOf(409), "答案个数不匹配");
+		//if (count != reqMsg.getMap().size())
+		//	throw new BusinessException(String.valueOf(409), "答案个数不匹配");
 	}
 
 	@Transactional
@@ -195,7 +195,7 @@ public class UserServiceImpl implements IUserService {
 		Date endDate = TimeTool.StrToDate(endtime);
 		long interval = new Date().getTime() - endDate.getTime();
 		if (interval < 0) {
-			return true;
+			avalid =  true;
 		}
 		return avalid;
 	}

@@ -95,11 +95,7 @@ public class UserController extends BaseController {
 	public String submitContent(SubmitContentRequest reqMsg) {
 		System.out.println(reqMsg.getQuestion_base_id());
 		System.out.println(reqMsg.getUser_id());
-		Map<String, String> map = reqMsg.getMap();
-		Set<String> keySet = map.keySet();
-		for(String key : keySet){
-			System.out.println("key : "+key+" value="+map.get(key));
-		}
+        System.out.println(reqMsg.getMap());
 		//this.userService.submitContent(reqMsg);
 		return null;
 	}
@@ -117,7 +113,7 @@ public class UserController extends BaseController {
 		map.put("result", result);
 		return "success";
 	}
-	
+
 	@RequestMapping("/user/savePhoto")
 	public void savePhoto(HttpServletRequest request,@RequestParam("proxyfile") MultipartFile file,String id) throws IOException{
 		String preffix = "/home/ubuntu/private/photo/";

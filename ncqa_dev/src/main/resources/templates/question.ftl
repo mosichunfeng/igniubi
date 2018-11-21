@@ -20,7 +20,13 @@
   <tr>
     <td>${question.id}</td>
     <td>${question.content}</td>
-    <td>${question.select_type}</td>
+    <td>
+        <#if question.select_type ==0>
+            单选
+        <#else>
+            多选
+        </#if>
+    </td>
     <#list question.answer_list as answer>
     	<td>${answer.answer_content}</td>
     </#list>
