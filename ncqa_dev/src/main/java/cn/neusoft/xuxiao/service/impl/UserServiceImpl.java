@@ -298,9 +298,8 @@ public class UserServiceImpl implements IUserService {
 
 		qb.setQuestion(questionList);
 
-
+		int index = 1;
 		for(Question question : questionList){
-			int index = 1;
 			question.setIndex(index);
 			List<Answer> answerList = questionDao.findAnswerListByQuestionId(question.getId());
 			question.setAnswer_list(answerList);
