@@ -27,7 +27,12 @@ public class QuesionController {
 	@ResponseBody
 	public String upload(HttpServletRequest request, @RequestParam("proxyfile") MultipartFile file) throws Exception {
 		this.questionService.insertDataToBase(file);
+		return null;
+	}
 
+	@RequestMapping("/admin/parseExcel")
+	public String parseExcel(HttpServletRequest request, @RequestParam("proxyfile") MultipartFile file) throws Exception {
+		this.questionService.insertDataToBase(file);
 		return null;
 	}
 

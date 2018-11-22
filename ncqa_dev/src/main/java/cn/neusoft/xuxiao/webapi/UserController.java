@@ -7,15 +7,7 @@ import cn.neusoft.xuxiao.dao.entity.UserInfoAndBaseDO;
 import cn.neusoft.xuxiao.service.inf.IUserService;
 import cn.neusoft.xuxiao.utils.StringUtil;
 import cn.neusoft.xuxiao.webapi.base.BaseController;
-import cn.neusoft.xuxiao.webapi.entity.AdminLoginResult;
-import cn.neusoft.xuxiao.webapi.entity.BindStudentInfoRequest;
-import cn.neusoft.xuxiao.webapi.entity.BindStudentInfoResponse;
-import cn.neusoft.xuxiao.webapi.entity.BindUserInfoRequest;
-import cn.neusoft.xuxiao.webapi.entity.EnsureJoinResponse;
-import cn.neusoft.xuxiao.webapi.entity.GetSessionKeyAndOpenIdResponse;
-import cn.neusoft.xuxiao.webapi.entity.QueryUserAnserHistoryRequest;
-import cn.neusoft.xuxiao.webapi.entity.StartAnswerQuestionResponse;
-import cn.neusoft.xuxiao.webapi.entity.SubmitContentRequest;
+import cn.neusoft.xuxiao.webapi.entity.*;
 
 import java.io.File;
 import java.io.IOException;
@@ -93,18 +85,16 @@ public class UserController extends BaseController {
 	@RequestMapping("/user/submitContent")
 	@ResponseBody
 	public String submitContent(SubmitContentRequest reqMsg) {
-		System.out.println(reqMsg.getQuestion_base_id());
-		System.out.println(reqMsg.getUser_id());
-        System.out.println(reqMsg.getMap());
-		//this.userService.submitContent(reqMsg);
-		return null;
+		reqMsg.setDataMap(StringUtil.StringToMap(reqMsg.getMap()));
+		SubmitContentResponse result = this.userService.submitContent(reqMsg);
+		return createResponse(result,ServiceResponseCode.OK);
 	}
 
 	@RequestMapping("/user/getAnswerHistory")
 	@ResponseBody
 	public String getAnswerHistory(QueryUserAnserHistoryRequest reqMsg) {
 		List<UserAnswerHistoryDO> result = this.userService.getAnswerHistory(reqMsg);
-		return createResponse(result, 200);
+		return createResponse(result, ServiceResponseCode.OK);
 	}
 
 	@RequestMapping("/user/adminLogin")

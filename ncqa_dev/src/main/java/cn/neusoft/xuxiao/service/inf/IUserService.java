@@ -3,15 +3,8 @@ package cn.neusoft.xuxiao.service.inf;
 import cn.neusoft.xuxiao.dao.entity.UserAnswerHistoryDO;
 import cn.neusoft.xuxiao.dao.entity.UserInfo;
 import cn.neusoft.xuxiao.dao.entity.UserInfoAndBaseDO;
-import cn.neusoft.xuxiao.webapi.entity.AdminLoginResult;
-import cn.neusoft.xuxiao.webapi.entity.BindStudentInfoRequest;
-import cn.neusoft.xuxiao.webapi.entity.BindStudentInfoResponse;
-import cn.neusoft.xuxiao.webapi.entity.BindUserInfoRequest;
-import cn.neusoft.xuxiao.webapi.entity.EnsureJoinResponse;
-import cn.neusoft.xuxiao.webapi.entity.GetSessionKeyAndOpenIdResponse;
-import cn.neusoft.xuxiao.webapi.entity.QueryUserAnserHistoryRequest;
-import cn.neusoft.xuxiao.webapi.entity.StartAnswerQuestionResponse;
-import cn.neusoft.xuxiao.webapi.entity.SubmitContentRequest;
+import cn.neusoft.xuxiao.webapi.entity.*;
+
 import java.util.List;
 
 public abstract interface IUserService{
@@ -27,7 +20,7 @@ public abstract interface IUserService{
 
   public  List<UserAnswerHistoryDO> getAnswerHistory(QueryUserAnserHistoryRequest reqMsg);
 
-  public  void submitContent(SubmitContentRequest reqMsg);
+  public SubmitContentResponse submitContent(SubmitContentRequest reqMsg);
 
   public  AdminLoginResult adminLogin(String username, String password);
   

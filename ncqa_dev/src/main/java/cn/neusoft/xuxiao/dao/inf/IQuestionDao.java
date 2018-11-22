@@ -35,4 +35,8 @@ public abstract interface IQuestionDao {
 	public abstract List<Question> findQuestionListByBaseId(int base_id);
 	
 	public abstract List<Answer> findAnswerListByQuestionId(int question_id);
+
+	public abstract void updateGradeByCode(ExamDO examDO);
+
+	public abstract RightAnswer findRightAnswerByQuestionId(int question_id);
 }

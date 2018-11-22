@@ -104,4 +104,18 @@ public class QuestionServiceImpl implements IQuestionService {
 		 }
 		 return questionList;
 	}
+
+	@Override
+	public void parseExcel(MultipartFile file) {
+		String fileName = file.getOriginalFilename();
+		String[] columns = { "学号", "姓名", "性别" ,"联系电话"};
+		InputStream is = null;
+		try {
+			is = file.getInputStream();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		List<Map<String, String>> list = ExcelUtil.parseExcel(fileName, is, columns);
+
+	}
 }

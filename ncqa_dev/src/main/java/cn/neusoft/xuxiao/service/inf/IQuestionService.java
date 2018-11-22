@@ -13,4 +13,6 @@ public abstract interface IQuestionService {
 	public abstract List<QuestionBase> getAllQuestionBase();
 	
 	public abstract List<Question> getAllQuestionByBaseId(int base_id);
+
+	public abstract  void parseExcel(MultipartFile paramMultipartFile);
 }

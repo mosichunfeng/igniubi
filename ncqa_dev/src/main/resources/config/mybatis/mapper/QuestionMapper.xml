@@ -106,7 +106,9 @@
 		from
 			question
 		where 
-			question_base_id = #{base_id}	
+			question_base_id = #{base_id}
+		order by RAND()
+		LIMIT 0,25
 	</select>
 	
 	<select id="findAnswerListByQuestionId" resultType="cn.neusoft.xuxiao.dao.entity.Answer">
@@ -114,6 +116,22 @@
 			*
 		from
 			answer
+		where
+			question_id = #{question_id}
+	</select>
+	
+	<update id="updateGradeByCode" parameterType="java.lang.String">
+		update
+			exam_history
+		set end_time = #{end_time},status = #{status},grade=#{grade}
+		where activity_code = #{code}
+	</update>
+
+	<select id="findRightAnswerByQuestionId" resultType="cn.neusoft.xuxiao.dao.entity.RightAnswer">
+		select
+			*
+		from
+			right_answer
 		where
 			question_id = #{question_id}
 	</select>

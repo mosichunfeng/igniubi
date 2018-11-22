@@ -3,16 +3,7 @@ package cn.neusoft.xuxiao.service.impl;
 import cn.neusoft.xuxiao.constants.ActivityCodeConstants;
 import cn.neusoft.xuxiao.constants.ExamConstants;
 import cn.neusoft.xuxiao.constants.ServiceResponseCode;
-import cn.neusoft.xuxiao.dao.entity.ActivityCodeDO;
-import cn.neusoft.xuxiao.dao.entity.Admin;
-import cn.neusoft.xuxiao.dao.entity.Answer;
-import cn.neusoft.xuxiao.dao.entity.ExamDO;
-import cn.neusoft.xuxiao.dao.entity.Question;
-import cn.neusoft.xuxiao.dao.entity.QuestionBase;
-import cn.neusoft.xuxiao.dao.entity.StudentDO;
-import cn.neusoft.xuxiao.dao.entity.UserAnswerHistoryDO;
-import cn.neusoft.xuxiao.dao.entity.UserInfo;
-import cn.neusoft.xuxiao.dao.entity.UserInfoAndBaseDO;
+import cn.neusoft.xuxiao.dao.entity.*;
 import cn.neusoft.xuxiao.dao.inf.IQuestionDao;
 import cn.neusoft.xuxiao.dao.inf.IUserDao;
 import cn.neusoft.xuxiao.exception.BusinessException;
@@ -22,18 +13,10 @@ import cn.neusoft.xuxiao.utils.StringUtil;
 import cn.neusoft.xuxiao.utils.TimeTool;
 import cn.neusoft.xuxiao.utils.ValidationUtils;
 import cn.neusoft.xuxiao.utils.WxApplicationDecoder;
-import cn.neusoft.xuxiao.webapi.entity.AdminLoginResult;
-import cn.neusoft.xuxiao.webapi.entity.BindStudentInfoRequest;
-import cn.neusoft.xuxiao.webapi.entity.BindStudentInfoResponse;
-import cn.neusoft.xuxiao.webapi.entity.BindUserInfoRequest;
-import cn.neusoft.xuxiao.webapi.entity.EnsureJoinResponse;
-import cn.neusoft.xuxiao.webapi.entity.GetSessionKeyAndOpenIdResponse;
-import cn.neusoft.xuxiao.webapi.entity.QueryUserAnserHistoryRequest;
-import cn.neusoft.xuxiao.webapi.entity.StartAnswerQuestionResponse;
-import cn.neusoft.xuxiao.webapi.entity.SubmitContentRequest;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import cn.neusoft.xuxiao.webapi.entity.*;
+
+import java.sql.Time;
+import java.util.*;
 import javax.annotation.Resource;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -122,13 +105,63 @@ public class UserServiceImpl implements IUserService {
 		return this.userDao.getAnswerHistory(reqMsg.getUser_id());
 	}
 
-	public void submitContent(SubmitContentRequest reqMsg) {
+	public SubmitContentResponse submitContent(SubmitContentRequest reqMsg) {
 		ValidationUtils.checkNotEmpty(Integer.valueOf(reqMsg.getUser_id()), "用户id不能为空");
-		ValidationUtils.checkNotEmpty(Integer.valueOf(reqMsg.getUser_id()), "题库id不能为空");
+		ValidationUtils.checkNotEmpty(Integer.valueOf(reqMsg.getQuestion_base_id()), "题库id不能为空");
 
-		int count = this.userDao.getQuestionCountByBaseId(reqMsg.getQuestion_base_id());
-		//if (count != reqMsg.getMap().size())
-		//	throw new BusinessException(String.valueOf(409), "答案个数不匹配");
+		int uid = Integer.valueOf(reqMsg.getUser_id());
+		int baseId = Integer.valueOf(reqMsg.getQuestion_base_id());
+		String code = uid + ActivityCodeConstants.MIDSINGNAL + baseId;
+
+		if (ExamConstants.QUESTION_COUNT != reqMsg.getDataMap().size())
+			throw new BusinessException(String.valueOf(409), "答案个数不匹配");
+
+
+		//验证答题完成
+		ExamDO examDO = questionDao.findExamHistoryByCode(code);
+		if(examDO!=null){
+			throw new BusinessException(String.valueOf(ServiceResponseCode.BUSINESS_EXCEPTION),"去你吗的，没事做搬砖去！");
+		}
+
+		ExamDO change = new ExamDO();
+		change.setActivity_code(code);
+		change.setEnd_time(TimeTool.DateToString(new Date()));
+		change.setStatus(ExamConstants.FINISHED);
+
+		//计算答题时间
+		long minutes = caculateMinutes(examDO.getStart_time());
+		//超时，判0
+		if(minutes > ExamConstants.ALL_EXAM_TIME){
+			examDO.setGrade(0);
+		}else{
+			Map<Integer,String> orgin = new HashMap<>();
+
+			List<Question> questionList = questionDao.findQuestionListByBaseId(baseId);
+			for(Question question : questionList){
+				RightAnswer rightAnswer = questionDao.findRightAnswerByQuestionId(question.getId());
+				orgin.put(question.getId(),rightAnswer.getAnswer_index());
+			}
+			int grade = caculateGrade(orgin,reqMsg.getDataMap());
+			change.setGrade(grade);
+		}
+		questionDao.updateGradeByCode(change);
+
+		SubmitContentResponse response = new SubmitContentResponse();
+		response.setGrade(change.getGrade());
+		return response;
+	}
+
+	private int caculateGrade(Map<Integer,String >orgin, Map<Integer,String> userData) {
+		int grade = 0;
+		Set<Integer> index = userData.keySet();
+		for(Integer one : index){
+			String right_answer = orgin.get(one);
+			String user_answer = userData.get(one);
+			if(right_answer.equals(user_answer)){
+				grade += ExamConstants.ONE_SELECT_GRADE;
+			}
+		}
+		return grade;
 	}
 
 	@Transactional
@@ -262,6 +295,7 @@ public class UserServiceImpl implements IUserService {
 		ExamDO examDO = questionDao.findExamHistoryByCode(code);
 		QuestionBase qb = questionDao.getQuestionBaseById(base_id);
 		List<Question> questionList = questionDao.findQuestionListByBaseId(base_id);
+
 		qb.setQuestion(questionList);
 		
 		for(Question question : questionList){
