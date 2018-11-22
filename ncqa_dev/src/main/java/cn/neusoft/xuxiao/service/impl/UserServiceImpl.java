@@ -119,7 +119,7 @@ public class UserServiceImpl implements IUserService {
 
 		//验证答题完成
 		ExamDO examDO = questionDao.findExamHistoryByCode(code);
-		if(examDO!=null){
+		if(examDO==null){
 			throw new BusinessException(String.valueOf(ServiceResponseCode.BUSINESS_EXCEPTION),"去你吗的，没事做搬砖去！");
 		}
 
@@ -297,10 +297,14 @@ public class UserServiceImpl implements IUserService {
 		List<Question> questionList = questionDao.findQuestionListByBaseId(base_id);
 
 		qb.setQuestion(questionList);
-		
+
+
 		for(Question question : questionList){
+			int index = 1;
+			question.setIndex(index);
 			List<Answer> answerList = questionDao.findAnswerListByQuestionId(question.getId());
 			question.setAnswer_list(answerList);
+			index++;
 		}
 		
 		//开始答题
