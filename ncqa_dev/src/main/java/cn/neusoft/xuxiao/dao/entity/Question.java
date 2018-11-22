@@ -12,4 +12,5 @@ public class Question {
 	private int select_type;
 	private String content;
 	private List<Answer> answer_list;
+	private int index;
 }
