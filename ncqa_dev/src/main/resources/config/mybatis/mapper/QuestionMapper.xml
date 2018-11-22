@@ -120,7 +120,7 @@
 			question_id = #{question_id}
 	</select>
 	
-	<update id="updateGradeByCode" parameterType="java.lang.String">
+	<update id="updateGradeByCode" parameterType="cn.neusoft.xuxiao.dao.entity.ExamDO">
 		update
 			exam_history
 		set end_time = #{end_time},status = #{status},grade=#{grade}
