@@ -124,7 +124,7 @@
 		update
 			exam_history
 		set end_time = #{end_time},status = #{status},grade=#{grade}
-		where activity_code = #{code}
+		where activity_code = #{activity_code}
 	</update>
 
 	<select id="findRightAnswerByQuestionId" resultType="cn.neusoft.xuxiao.dao.entity.RightAnswer">
