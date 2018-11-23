@@ -307,7 +307,7 @@ public class UserServiceImpl implements IUserService {
 		
 		ExamDO examDO = questionDao.findExamHistoryByCode(code);
 		QuestionBase qb = questionDao.getQuestionBaseById(base_id);
-		List<Question> questionList = questionDao.findQuestionListByBaseId(base_id);
+		List<Question> questionList = questionDao.findRandQuestionListByBaseId(base_id);
 
 		qb.setQuestion(questionList);
 

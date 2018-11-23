@@ -107,10 +107,19 @@
 			question
 		where 
 			question_base_id = #{base_id}
+	</select>
+
+	<select id="findRandQuestionListByBaseId" resultType="cn.neusoft.xuxiao.dao.entity.Question">
+		select
+			*
+		from
+			question
+		where
+			question_base_id = #{base_id}
 		order by RAND()
 		LIMIT 0,25
 	</select>
-	
+
 	<select id="findAnswerListByQuestionId" resultType="cn.neusoft.xuxiao.dao.entity.Answer">
 		select
 			*
