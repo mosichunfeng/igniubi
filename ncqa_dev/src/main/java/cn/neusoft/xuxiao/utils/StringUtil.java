@@ -1,11 +1,7 @@
 package cn.neusoft.xuxiao.utils;
 
-import org.junit.Test;
-
-import javax.swing.*;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Set;
 import java.util.UUID;
 
 public class StringUtil
@@ -44,6 +40,7 @@ public class StringUtil
             String t = s.replace("{"," ").replace("}"," ").trim();
             String[] split1 = t.split(":");
             String key = split1[0].replace('"',' ').trim();
+            String value = split1[1].replace('"',' ').trim();
             map.put(Integer.valueOf(key),split1[1]);
         }
         return  map;
