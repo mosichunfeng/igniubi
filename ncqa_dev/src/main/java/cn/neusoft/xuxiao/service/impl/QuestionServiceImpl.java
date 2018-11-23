@@ -81,9 +81,14 @@ public class QuestionServiceImpl implements IQuestionService {
 
 		questionDao.insertQuestion(questionList);
 		for (Question question1 : questionList) {
-			for (Answer answer : answerList)
+			for (Answer answer : answerList) {
 				if (answer.getQuestion_id() == question1.getQuestion_index())
 					answer.setQuestion_id(question1.getId());
+			}
+			for(RightAnswer right : rightAnswerList){
+				if(right.getQuestion_id() == question1.getQuestion_index())
+					right.setQuestion_id(question1.getId());
+			}
 		}
 		this.questionDao.insertAnswer(answerList);
 		this.questionDao.insertRightAnswer(rightAnswerList);
