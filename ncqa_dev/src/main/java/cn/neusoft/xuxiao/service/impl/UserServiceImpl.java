@@ -161,7 +161,7 @@ public class UserServiceImpl implements IUserService {
 			String right_answer = orgin.get(one);
 			String user_answer = userData.get(one);
 			System.out.print("用户答案是"+user_answer);
-			System.out.print("正确答案是"+user_answer);
+			System.out.print("正确答案是"+right_answer);
 			if(right_answer.equals(user_answer)){
 				grade += ExamConstants.ONE_SELECT_GRADE;
 			}
