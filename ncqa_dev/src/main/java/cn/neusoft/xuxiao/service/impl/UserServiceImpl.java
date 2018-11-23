@@ -152,11 +152,24 @@ public class UserServiceImpl implements IUserService {
 	}
 
 	private int caculateGrade(Map<Integer,String >orgin, Map<Integer,String> userData) {
+
+		Set<Integer> i = orgin.keySet();
+
+		for(Integer s : i){
+			System.out.println(s);
+			System.out.println(orgin.get(s));
+		}
 		int grade = 0;
 		Set<Integer> index = userData.keySet();
 		for(Integer one : index){
 			String right_answer = orgin.get(one);
 			String user_answer = userData.get(one);
+			if(right_answer == null){
+				System.out.println("数据库没有:"+one);
+			}else if(user_answer==null){
+				System.out.println("用户没有"+one);
+			}
+
 			if(right_answer.equals(user_answer)){
 				grade += ExamConstants.ONE_SELECT_GRADE;
 			}
