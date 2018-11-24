@@ -9,4 +9,5 @@ public class StudentDO {
 	private String student_name;
 	private String student_class;
 	private String student_gender;
+	private String student_tel;
 }

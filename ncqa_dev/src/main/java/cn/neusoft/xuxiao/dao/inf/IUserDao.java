@@ -1,9 +1,6 @@
 package cn.neusoft.xuxiao.dao.inf;
 
-import cn.neusoft.xuxiao.dao.entity.Admin;
-import cn.neusoft.xuxiao.dao.entity.StudentDO;
-import cn.neusoft.xuxiao.dao.entity.UserAnswerHistoryDO;
-import cn.neusoft.xuxiao.dao.entity.UserInfo;
+import cn.neusoft.xuxiao.dao.entity.*;
 
 import java.util.List;
 import org.apache.ibatis.annotations.Mapper;
@@ -16,7 +13,6 @@ public abstract interface IUserDao {
 	public abstract UserInfo findUserByOpenId(String paramString);
 
 	public abstract Integer insertUserByOpenId(String paramString);
-	
 
 	public abstract void updateUserInfoById(UserInfo paramUserInfo);
 
@@ -33,4 +29,8 @@ public abstract interface IUserDao {
 	public abstract Admin getAdminByUsername(String paramString);
 	
 	public abstract StudentDO findStudentByUid(int id);
+
+	public abstract Register findRegisterByUid(int user_id);
+
+	public abstract void register(Register registerDO);
 }

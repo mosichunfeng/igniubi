@@ -43,6 +43,7 @@ public class ExcelUtil
       switch (cell.getCellType()) {
       case 0:
         cellValue = String.valueOf((int)cell.getNumericCellValue());
+        System.out.println("数值"+cellValue);
         break;
       case 2:
         if (DateUtil.isCellDateFormatted(cell))
@@ -50,7 +51,7 @@ public class ExcelUtil
           cellValue = cell.getDateCellValue(); break;
         }
 
-        cellValue = String.valueOf((int)cell.getNumericCellValue());
+        cellValue = String.valueOf((int) cell.getNumericCellValue());
 
         break;
       case 1:

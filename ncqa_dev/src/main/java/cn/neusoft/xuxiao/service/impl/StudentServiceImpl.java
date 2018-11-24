@@ -21,7 +21,7 @@ public class StudentServiceImpl implements IStudentService {
 
 	public void parseExcel(MultipartFile file) {
 		String fileName = file.getOriginalFilename();
-		String[] columns = { "编号", "学号", "姓名", "班级", "性别" };
+		String[] columns = { "编号", "学号", "姓名", "班级", "性别" ,"联系电话"};
 		InputStream is = null;
 		try {
 			is = file.getInputStream();
@@ -36,7 +36,7 @@ public class StudentServiceImpl implements IStudentService {
 			student.setStudent_name((String) map.get("姓名"));
 			student.setStudent_class((String) map.get("班级"));
 			student.setStudent_gender((String) map.get("性别"));
-
+			student.setStudent_tel((String)map.get("联系电话"));
 			studentList.add(student);
 		}
 

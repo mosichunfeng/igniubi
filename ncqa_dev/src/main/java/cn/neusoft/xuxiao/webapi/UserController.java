@@ -1,6 +1,7 @@
 package cn.neusoft.xuxiao.webapi;
 
 import cn.neusoft.xuxiao.constants.ServiceResponseCode;
+import cn.neusoft.xuxiao.dao.entity.Register;
 import cn.neusoft.xuxiao.dao.entity.UserAnswerHistoryDO;
 import cn.neusoft.xuxiao.dao.entity.UserInfo;
 import cn.neusoft.xuxiao.dao.entity.UserInfoAndBaseDO;
@@ -30,86 +31,99 @@ import org.springframework.web.multipart.MultipartFile;
 @Controller
 public class UserController extends BaseController {
 
-	@Resource(name = "iUserServiceImpl")
-	private IUserService userService;
+    @Resource(name = "iUserServiceImpl")
+    private IUserService userService;
 
-	@RequestMapping("/user/getSessionKeyAndOropenid")
-	@ResponseBody
-	public String getSessionKeyAndOropenid(String code) {
-		GetSessionKeyAndOpenIdResponse result = this.userService.getSessionKeyAndOropenid(code);
-		return generateResponse(result, ServiceResponseCode.OK);
-	}
+    @RequestMapping("/user/getSessionKeyAndOropenid")
+    @ResponseBody
+    public String getSessionKeyAndOropenid(String code) {
+        GetSessionKeyAndOpenIdResponse result = this.userService.getSessionKeyAndOropenid(code);
+        return generateResponse(result, ServiceResponseCode.OK);
+    }
 
-	@RequestMapping("/user/getWxCountInfo")
-	@ResponseBody
-	public String getWxCountInfo(BindUserInfoRequest reqMsg) {
-		UserInfo result = this.userService.bindUserInfo(reqMsg);
-		return createResponse(result, ServiceResponseCode.OK);
-	}
+    @RequestMapping("/user/getWxCountInfo")
+    @ResponseBody
+    public String getWxCountInfo(BindUserInfoRequest reqMsg) {
+        UserInfo result = this.userService.bindUserInfo(reqMsg);
+        return createResponse(result, ServiceResponseCode.OK);
+    }
 
-	@RequestMapping("/user/bindUserInfo")
-	@ResponseBody
-	public String bindUserInfo(BindStudentInfoRequest reqMsg) {
-		BindStudentInfoResponse result = this.userService.bindStudentInfo(reqMsg);
-		return createResponse(result, ServiceResponseCode.OK);
-	}
-	
-	@ResponseBody
-	@RequestMapping("/user/getUserInfo" )
-	public String getUserInfo(String id) {
-		UserInfo result = userService.getUserInfo(id);
-		return createResponse(result, ServiceResponseCode.OK);
-	}
+    @RequestMapping("/user/bindUserInfo")
+    @ResponseBody
+    public String bindUserInfo(BindStudentInfoRequest reqMsg) {
+        BindStudentInfoResponse result = this.userService.bindStudentInfo(reqMsg);
+        return createResponse(result, ServiceResponseCode.OK);
+    }
 
-	@ResponseBody
-	@RequestMapping("/user/getUserInfoAndBase")
-	public String getUserInfoAndBase(String id){
-		UserInfoAndBaseDO result = userService.getUserInfoAndBase(id);
-		return createResponse(result, ServiceResponseCode.OK);
-	}
-	
-	@ResponseBody
-	@RequestMapping("/user/ensureJoin")
-	public String ensureJoin(String user_id,String base_id){
-		EnsureJoinResponse result = userService.ensureJoin(user_id, base_id);
-		return createResponse(result, ServiceResponseCode.OK);
-	}
+    @ResponseBody
+    @RequestMapping("/user/getUserInfo")
+    public String getUserInfo(String id) {
+        UserInfo result = userService.getUserInfo(id);
+        return createResponse(result, ServiceResponseCode.OK);
+    }
 
-	@RequestMapping("/user/startAnswerQuestion")
-	@ResponseBody
-	public String startAnswerQuestion(String user_id,String code) {
-		StartAnswerQuestionResponse result = userService.startAnswerQuestion(user_id, code);
-		return createResponse(result, ServiceResponseCode.OK);
-	}
+    @ResponseBody
+    @RequestMapping("/user/getUserInfoAndBase")
+    public String getUserInfoAndBase(String id) {
+        UserInfoAndBaseDO result = userService.getUserInfoAndBase(id);
+        return createResponse(result, ServiceResponseCode.OK);
+    }
 
-	@RequestMapping("/user/submitContent")
-	@ResponseBody
-	public String submitContent(SubmitContentRequest reqMsg) {
-		reqMsg.setDataMap(StringUtil.StringToMap(reqMsg.getMap()));
-		SubmitContentResponse result = this.userService.submitContent(reqMsg);
-		return createResponse(result,ServiceResponseCode.OK);
-	}
+    @ResponseBody
+    @RequestMapping("/user/ensureJoin")
+    public String ensureJoin(String user_id, String base_id) {
+        EnsureJoinResponse result = userService.ensureJoin(user_id, base_id);
+        return createResponse(result, ServiceResponseCode.OK);
+    }
 
-	@RequestMapping("/user/getAnswerHistory")
-	@ResponseBody
-	public String getAnswerHistory(QueryUserAnserHistoryRequest reqMsg) {
-		List<UserAnswerHistoryDO> result = this.userService.getAnswerHistory(reqMsg);
-		return createResponse(result, ServiceResponseCode.OK);
-	}
+    @RequestMapping("/user/startAnswerQuestion")
+    @ResponseBody
+    public String startAnswerQuestion(String user_id, String code) {
+        StartAnswerQuestionResponse result = userService.startAnswerQuestion(user_id, code);
+        return createResponse(result, ServiceResponseCode.OK);
+    }
 
-	@RequestMapping("/user/adminLogin")
-	public String adminLogin(String username, String password,ModelMap map) {
-		AdminLoginResult result = this.userService.adminLogin(username, password);
-		map.put("result", result);
-		return "success";
-	}
+    @RequestMapping("/user/submitContent")
+    @ResponseBody
+    public String submitContent(SubmitContentRequest reqMsg) {
+        reqMsg.setDataMap(StringUtil.StringToMap(reqMsg.getMap()));
+        SubmitContentResponse result = this.userService.submitContent(reqMsg);
+        return createResponse(result, ServiceResponseCode.OK);
+    }
 
-	@RequestMapping("/user/savePhoto")
-	public void savePhoto(HttpServletRequest request,@RequestParam("proxyfile") MultipartFile file,String id) throws IOException{
-		String preffix = "/home/ubuntu/private/photo/";
-		String path = preffix+StringUtil.getUUid()+"_"+id+".jpg";
-		System.out.println(path);
-		File newFile = new File(path);
-		file.transferTo(newFile);
-	}
+    @RequestMapping("/user/getAnswerHistory")
+    @ResponseBody
+    public String getAnswerHistory(QueryUserAnserHistoryRequest reqMsg) {
+        List<UserAnswerHistoryDO> result = this.userService.getAnswerHistory(reqMsg);
+        return createResponse(result, ServiceResponseCode.OK);
+    }
+
+    @RequestMapping("/user/adminLogin")
+    public String adminLogin(String username, String password, ModelMap map) {
+        AdminLoginResult result = this.userService.adminLogin(username, password);
+        map.put("result", result);
+        return "success";
+    }
+
+    @RequestMapping("/user/savePhoto")
+    public void savePhoto(HttpServletRequest request, @RequestParam("proxyfile") MultipartFile file, String id) throws IOException {
+        String preffix = "/home/ubuntu/private/photo/";
+        String path = preffix + StringUtil.getUUid() + "_" + id + ".jpg";
+        System.out.println(path);
+        File newFile = new File(path);
+        file.transferTo(newFile);
+    }
+
+    @RequestMapping("/user/Register")
+    public String Register(RegisterRequest reqMsg, @RequestParam("proxyfile") MultipartFile file) {
+        IsRegisterResponse result = userService.register(reqMsg, file);
+        return createResponse(result,ServiceResponseCode.OK);
+    }
+
+    @RequestMapping("/user/isRegister")
+    public String isRegister(String user_id) {
+        IsRegisterResponse result = userService.isRegister(user_id);
+        return createResponse(result,ServiceResponseCode.OK);
+    }
+
 }

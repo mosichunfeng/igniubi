@@ -6,7 +6,10 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.TimeZone;
 
+import org.junit.Test;
 import org.springframework.stereotype.Component;
+
+import javax.xml.crypto.Data;
 
 @Component
 public class TimeTool {
@@ -205,6 +208,27 @@ public class TimeTool {
 	}
 
 	/**
+	 * 时间转字符串 yyyy-MM
+	 */
+	public static String DateToStringMini(Date f){
+		if(f != null){
+			return getSimpleDateFormat(PATTERN_YM).format(f);
+		}else{
+			return "";
+		}
+	}
+
+	/**
+	 * 计算今天是多少周
+	 * @return
+	 */
+	public static int getWeekOfYear(){
+		Calendar c = Calendar.getInstance();
+		c.setFirstDayOfWeek(Calendar.MONDAY);//将周一设为一周的开始，符合中国的习惯
+		return c.get(Calendar.WEEK_OF_YEAR);
+	}
+
+	/**
 	 * 字符串转时间
 	 * 
 	 * @param str
@@ -332,7 +356,7 @@ public class TimeTool {
 	 * @date 2018年6月21日 下午3:51:22
 	 * @param date
 	 * @param days
-	 * @param format
+	 * @param
 	 * @return
 	 */
 	public static String addDateTime(Date date, int days, String pattern) {
