@@ -114,4 +114,10 @@
 		insert into
 			register(student_id,student_name,start_time,address)
 	</insert>
+
+	<select id="getAnswerHistory" resultType="cn.neusoft.xuxiao.dao.entity.ExamDO">
+		SELECT *FROM
+			exam_history
+		WHERE user_id = #{user_id}
+	</select>
 </mapper>

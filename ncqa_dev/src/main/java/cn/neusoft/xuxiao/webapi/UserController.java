@@ -1,10 +1,7 @@
 package cn.neusoft.xuxiao.webapi;
 
 import cn.neusoft.xuxiao.constants.ServiceResponseCode;
-import cn.neusoft.xuxiao.dao.entity.Register;
-import cn.neusoft.xuxiao.dao.entity.UserAnswerHistoryDO;
-import cn.neusoft.xuxiao.dao.entity.UserInfo;
-import cn.neusoft.xuxiao.dao.entity.UserInfoAndBaseDO;
+import cn.neusoft.xuxiao.dao.entity.*;
 import cn.neusoft.xuxiao.service.inf.IUserService;
 import cn.neusoft.xuxiao.utils.StringUtil;
 import cn.neusoft.xuxiao.webapi.base.BaseController;
@@ -94,7 +91,7 @@ public class UserController extends BaseController {
     @RequestMapping("/user/getAnswerHistory")
     @ResponseBody
     public String getAnswerHistory(QueryUserAnserHistoryRequest reqMsg) {
-        List<UserAnswerHistoryDO> result = this.userService.getAnswerHistory(reqMsg);
+        List<ExamDO> result = this.userService.getAnswerHistory(reqMsg);
         return createResponse(result, ServiceResponseCode.OK);
     }
 

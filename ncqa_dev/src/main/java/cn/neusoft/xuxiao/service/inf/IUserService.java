@@ -1,9 +1,6 @@
 package cn.neusoft.xuxiao.service.inf;
 
-import cn.neusoft.xuxiao.dao.entity.Register;
-import cn.neusoft.xuxiao.dao.entity.UserAnswerHistoryDO;
-import cn.neusoft.xuxiao.dao.entity.UserInfo;
-import cn.neusoft.xuxiao.dao.entity.UserInfoAndBaseDO;
+import cn.neusoft.xuxiao.dao.entity.*;
 import cn.neusoft.xuxiao.webapi.entity.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -20,7 +17,7 @@ public abstract interface IUserService{
   
   public  UserInfoAndBaseDO getUserInfoAndBase(String id);
 
-  public  List<UserAnswerHistoryDO> getAnswerHistory(QueryUserAnserHistoryRequest reqMsg);
+  public  List<ExamDO> getAnswerHistory(QueryUserAnserHistoryRequest reqMsg);
 
   public SubmitContentResponse submitContent(SubmitContentRequest reqMsg);
 

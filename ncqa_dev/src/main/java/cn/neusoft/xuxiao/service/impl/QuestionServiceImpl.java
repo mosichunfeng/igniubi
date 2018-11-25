@@ -1,18 +1,22 @@
 package cn.neusoft.xuxiao.service.impl;
 
-import cn.neusoft.xuxiao.dao.entity.Answer;
-import cn.neusoft.xuxiao.dao.entity.Question;
-import cn.neusoft.xuxiao.dao.entity.QuestionBase;
-import cn.neusoft.xuxiao.dao.entity.RightAnswer;
+import cn.neusoft.xuxiao.constants.ServiceResponseCode;
+import cn.neusoft.xuxiao.dao.entity.*;
 import cn.neusoft.xuxiao.dao.inf.IQuestionDao;
+import cn.neusoft.xuxiao.exception.BusinessException;
 import cn.neusoft.xuxiao.service.inf.IQuestionService;
 import cn.neusoft.xuxiao.utils.ExcelUtil;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletResponse;
+
+import cn.neusoft.xuxiao.utils.ValidationUtils;
+import org.apache.poi.hssf.usermodel.*;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -24,7 +28,7 @@ public class QuestionServiceImpl implements IQuestionService {
 	private IQuestionDao questionDao;
 
 	@Transactional
-	public void insertDataToBase(MultipartFile file) {
+	public void insertDataToBase(MultipartFile file,String base_id) {
 		String fileName = file.getOriginalFilename();
 		String[] columns = { "问题编号", "问题", "选项类型", "选项A", "选项B", "选项C", "选项D", "正确答案" };
 		InputStream is = null;
@@ -41,7 +45,7 @@ public class QuestionServiceImpl implements IQuestionService {
 		Question question = null;
 		for (Map<String, String> map : list) {
 			question = new Question();
-			question.setQuestion_base_id(1);
+			question.setQuestion_base_id(Integer.valueOf(base_id));
 			question.setQuestion_index(Integer.valueOf((String) map.get("问题编号")).intValue());
 			question.setContent((String) map.get("问题"));
 			question.setSelect_type(Integer.valueOf((String) map.get("选项类型")).intValue());
@@ -123,4 +127,54 @@ public class QuestionServiceImpl implements IQuestionService {
 		List<Map<String, String>> list = ExcelUtil.parseExcel(fileName, is, columns);
 
 	}
+
+	@Override
+	public void exportBase(String base_id , HttpServletResponse response) {
+		ValidationUtils.checkNotEmpty(base_id,"题库id不能为空");
+		int baseId = Integer.valueOf(base_id);
+
+		QuestionBase questionBase = questionDao.getQuestionBaseById(baseId);
+		List<GradeDO> gradeList = questionDao.findGradeListByBaseId(baseId);
+
+		HSSFWorkbook workbook = new HSSFWorkbook();
+		HSSFSheet sheet = workbook.createSheet("成绩表");
+		String[] headers = {"学号","姓名","班级","分数","答题开始时间","答题结束时间"};
+		String fileName = questionBase.getName()+System.currentTimeMillis()+".xls";
+		try {
+			fileName = new String(fileName.getBytes("GB2312"), "8859_1");
+		} catch (UnsupportedEncodingException e) {
+			e.printStackTrace();
+		}
+		int rowNum = 1;
+		HSSFRow row = sheet.createRow(0);
+		for(int i=0;i<headers.length;i++){
+			HSSFCell cell = row.createCell(i);
+			HSSFRichTextString text = new HSSFRichTextString(headers[i]);
+			cell.setCellValue(text);
+		}
+
+		for (int i = 0;i<gradeList.size();i++) {
+			GradeDO grade = gradeList.get(i);
+			HSSFRow row1 = sheet.createRow(rowNum);
+			row1.createCell(0).setCellValue(grade.getStudent_id());
+			row1.createCell(1).setCellValue(grade.getStudent_name());
+			row1.createCell(2).setCellValue(grade.getStudent_class());
+			row1.createCell(3).setCellValue(grade.getGrade());
+			row1.createCell(4).setCellValue(grade.getStart_time());
+			row1.createCell(5).setCellValue(grade.getEnd_time());
+			rowNum++;
+		}
+
+		response.setContentType("application/octet-stream");
+		response.setHeader("Content-disposition", "attachment;filename=" + fileName);
+		try {
+			response.flushBuffer();
+			workbook.write(response.getOutputStream());
+		} catch (IOException e) {
+			throw new BusinessException(String.valueOf(ServiceResponseCode.BUSINESS_EXCEPTION),"服务器异常，请联系管理员！");
+		}
+
+
+	}
+
 }

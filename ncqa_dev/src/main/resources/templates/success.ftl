@@ -20,11 +20,11 @@ SB
     <td>${base.start_time}</td>
     <td>${base.end_time}</td>
     <td>
-   		<a href="http://www.baidu.com">查看</a>
-   		<a href="http://www.baidu.com">上传</a>
+   		<a href="http://localhost:8082/admin/getQuestionByBaseId?base_id=${base.id}">查看</a>
+        <a href="http://localhost:8082/admin/uploadPage?base_id=${base.id}&base_name=${base.name}">上传</a>
     	<a href="http://www.baidu.com">修改</a>
     	<a href="http://www.baidu.com">删除</a>
-    	<a href="http://www.baidu.com">导出</a>
+    	<a href="http://localhost:8082/admin/exportBase?base_id=${base.id}">导出</a>
     </td>
   </tr>
   </#list>

@@ -105,9 +105,9 @@ public class UserServiceImpl implements IUserService {
         return userInfo;
     }
 
-    public List<UserAnswerHistoryDO> getAnswerHistory(QueryUserAnserHistoryRequest reqMsg) {
+    public List<ExamDO> getAnswerHistory(QueryUserAnserHistoryRequest reqMsg) {
         ValidationUtils.checkNotEmpty(Integer.valueOf(reqMsg.getUser_id()), "用户id不能为空");
-        return this.userDao.getAnswerHistory(reqMsg.getUser_id());
+        return userDao.getAnswerHistory(reqMsg.getUser_id());
     }
 
     public SubmitContentResponse submitContent(SubmitContentRequest reqMsg) {

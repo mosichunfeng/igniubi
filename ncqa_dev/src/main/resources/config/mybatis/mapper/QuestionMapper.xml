@@ -144,4 +144,16 @@
 		where
 			question_id = #{question_id}
 	</select>
+
+	<select id="findGradeListByBaseId" resultType="cn.neusoft.xuxiao.dao.entity.GradeDO">
+		select
+			s.student_id,s.student_name,s.student_class,
+			eh.start_time,eh.end_time,eh.grade
+		from
+			exam_history eh
+		INNER JOIN student s
+			ON eh.user_id = s.id
+		where eh.question_base_id=#{base_id}
+		and status = 1
+	</select>
 </mapper>

@@ -22,7 +22,7 @@ public abstract interface IUserDao {
 
 	public abstract void bindStudentInfo(@Param("id") int paramInt, @Param("student_id") String paramString);
 
-	public abstract List<UserAnswerHistoryDO> getAnswerHistory(int paramInt);
+	public abstract List<ExamDO> getAnswerHistory(int user_id);
 
 	public abstract int getQuestionCountByBaseId(int paramInt);
 
