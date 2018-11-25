@@ -113,6 +113,7 @@
 	<insert id="register" parameterType="cn.neusoft.xuxiao.dao.entity.Register">
 		insert into
 			register(student_id,student_name,start_time,address)
+		values(#{student_id},#{student_name},#{start_time},#{address})
 	</insert>
 
 	<select id="getAnswerHistory" resultType="cn.neusoft.xuxiao.dao.entity.ExamDO">
