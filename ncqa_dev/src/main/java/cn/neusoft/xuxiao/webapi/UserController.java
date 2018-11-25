@@ -96,6 +96,7 @@ public class UserController extends BaseController {
     }
 
     @RequestMapping("/user/adminLogin")
+    @ResponseBody
     public String adminLogin(String username, String password, ModelMap map) {
         AdminLoginResult result = this.userService.adminLogin(username, password);
         map.put("result", result);
@@ -112,12 +113,14 @@ public class UserController extends BaseController {
     }
 
     @RequestMapping("/user/Register")
+    @ResponseBody
     public String Register(RegisterRequest reqMsg, @RequestParam("proxyfile") MultipartFile file) {
         IsRegisterResponse result = userService.register(reqMsg, file);
         return createResponse(result,ServiceResponseCode.OK);
     }
 
     @RequestMapping("/user/isRegister")
+    @ResponseBody
     public String isRegister(String user_id) {
         IsRegisterResponse result = userService.isRegister(user_id);
         return createResponse(result,ServiceResponseCode.OK);
