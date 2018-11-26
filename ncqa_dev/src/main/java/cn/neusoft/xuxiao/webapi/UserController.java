@@ -127,6 +127,7 @@ public class UserController extends BaseController {
     }
 
     @RequestMapping("/user/submitFeedback")
+    @ResponseBody
     public String submitFeedback(SubmitFeedbackRequest reqMsg){
         SubmitFeedbackResponse result = userService.submitFeedback(reqMsg);
         return createResponse(result,ServiceResponseCode.OK);
