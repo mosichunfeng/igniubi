@@ -30,4 +30,6 @@ public abstract interface IUserService{
   public IsRegisterResponse isRegister(String user_id);
 
   public IsRegisterResponse register(RegisterRequest reqMsg, MultipartFile file);
+
+  public SubmitFeedbackResponse submitFeedback(SubmitFeedbackRequest reqMsg);
 }

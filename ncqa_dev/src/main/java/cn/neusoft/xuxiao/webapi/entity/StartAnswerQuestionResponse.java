@@ -4,7 +4,7 @@ import cn.neusoft.xuxiao.dao.entity.QuestionBase;
 import lombok.Data;
 
 @Data
-public class StartAnswerQuestionResponse {
+public class StartAnswerQuestionResponse extends BaseResponse{
 	
 	private int user_id;
 

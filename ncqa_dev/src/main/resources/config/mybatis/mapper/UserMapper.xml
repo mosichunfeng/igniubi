@@ -121,4 +121,10 @@
 			exam_history
 		WHERE user_id = #{user_id}
 	</select>
+
+	<insert id="saveFeedback" parameterType="cn.neusoft.xuxiao.dao.entity.Feedback">
+		insert into
+			feedback(user_id,title,content,record_time)
+		values(#{user_id},#{title},#{content},#{record_time})
+	</insert>
 </mapper>

@@ -408,4 +408,20 @@ public class UserServiceImpl implements IUserService {
         return response;
     }
 
+    @Override
+    public SubmitFeedbackResponse submitFeedback(SubmitFeedbackRequest reqMsg) {
+        ValidationUtils.checkNotEmpty(String.valueOf(reqMsg.getUser_id()),"user_id不能为空！");
+        ValidationUtils.checkNotEmpty(reqMsg.getTitle(),"标题不能为空!");
+        ValidationUtils.checkNotEmpty(reqMsg.getContent(),"内容不能为空!");
+
+        Feedback feedback = new Feedback();
+        feedback.setUser_id(reqMsg.getUser_id());
+        feedback.setTitle(reqMsg.getTitle());
+        feedback.setContent(reqMsg.getContent());
+        feedback.setRecord_time(TimeTool.DateToString(new Date()));
+
+        userDao.saveFeedback(feedback);
+        return new SubmitFeedbackResponse();
+    }
+
 }

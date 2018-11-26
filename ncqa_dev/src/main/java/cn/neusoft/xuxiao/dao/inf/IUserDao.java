@@ -33,4 +33,6 @@ public abstract interface IUserDao {
 	public abstract Register findRegisterByUid(int user_id);
 
 	public abstract void register(Register registerDO);
+
+	public abstract void saveFeedback(Feedback feedback);
 }
