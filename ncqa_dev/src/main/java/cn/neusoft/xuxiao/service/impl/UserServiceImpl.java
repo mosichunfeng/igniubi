@@ -46,11 +46,8 @@ public class UserServiceImpl implements IUserService {
         UserInfo userInfo = this.userDao.findUserByOpenId(openId);
         boolean isBind = false;
         int key;
-        UserInfo user_info = new UserInfo();
-        user_info.setOpen_id(openId);
         if (null == userInfo) {
-            userDao.insertUserByOpenId(user_info).intValue();
-            key = user_info.getId();
+            key = userDao.insertUserByOpenId(openId).intValue();
             System.out.println(key);
         } else {
             System.out.println(userInfo.getStudent_id());
