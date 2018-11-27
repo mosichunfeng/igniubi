@@ -12,7 +12,7 @@ import org.springframework.stereotype.Repository;
 public abstract interface IUserDao {
 	public abstract UserInfo findUserByOpenId(String paramString);
 
-	public abstract Integer insertUserByOpenId(String openId);
+	public abstract Integer insertUserByOpenId(UserInfo userInfo);
 
 	public abstract void updateUserInfoById(UserInfo paramUserInfo);
 

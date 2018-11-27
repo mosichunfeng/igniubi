@@ -85,13 +85,13 @@
 		username=#{username}
 	</select>
 	
-	<insert id="insertUserByOpenId" parameterType="java.lang.String">
+	<insert id="insertUserByOpenId" parameterType="cn.neusoft.xuxiao.dao.entity.UserInfo">
 		<selectKey resultType="java.lang.Integer" order="AFTER" keyProperty="id">
 			SELECT LAST_INSERT_ID()
 		</selectKey>
 		insert into
 		wx_user(open_id)
-		values(#{openId})
+		values(#{open_id})
 	</insert>
 	
 	<select id="findStudentByUid" resultType="cn.neusoft.xuxiao.dao.entity.StudentDO">
