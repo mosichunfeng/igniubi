@@ -72,7 +72,7 @@
 	
 	<select id="insertActivityCode" parameterType="cn.neusoft.xuxiao.dao.entity.ActivityCodeDO">
 		insert into
-			activity_code(user_id,code,question_base_id)
+			activity_code(user_id,code,question_base_id,time)
 		values(#{user_id},#{code},#{question_base_id},#{time})
 	</select>
 	
