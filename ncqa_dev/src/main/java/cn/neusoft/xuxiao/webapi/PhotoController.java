@@ -29,7 +29,7 @@ public class PhotoController {
 
     @RequestMapping("/photo/getOnePhoto")
     public void getOnePhoto(HttpServletResponse response,String week,String name) throws IOException {
-        String rootPath1 = "/home/ubuntu/ncqa_dev/registerImages/";
+        String rootPath1 = "/home/ubuntu/ncqa_dev/registerImages/"+week+"/"+name;
         ImageUtils.imageFiletoClient(response,rootPath1);
     }
 
