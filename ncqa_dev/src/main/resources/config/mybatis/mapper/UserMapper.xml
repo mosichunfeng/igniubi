@@ -130,4 +130,23 @@
 			feedback(user_id,title,content,record_time)
 		values(#{user_id},#{title},#{content},#{record_time})
 	</insert>
+
+	<select id="findRegisterByStudentId" resultType="cn.neusoft.xuxiao.dao.entity.Register">
+		select
+		*
+		from
+		register
+		where
+		student_id=#{student_id}
+	</select>
+
+	<select id="findRecentRegisterByStudentId" resultType="cn.neusoft.xuxiao.dao.entity.Register">
+		SELECT
+			*
+		FROM
+			register
+		WHERE student_id= #{student_id}
+			ORDER BY id DESC
+		LIMIT 1
+	</select>
 </mapper>

@@ -42,7 +42,7 @@ public class PhotoServiceImpl implements IPhotoService {
         for(String one : fileName){
             Map<String, String> map = new HashMap<>();
             if(!StringUtil.isEmpty(selecter.getName())){
-                String student_name = one.substring(12,15);
+                String student_name = one.substring(11,14);
                 if(student_name.endsWith("2")){
                     student_name = student_name.substring(0, 2);
                 }

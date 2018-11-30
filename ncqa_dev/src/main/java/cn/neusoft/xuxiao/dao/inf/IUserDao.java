@@ -14,6 +14,8 @@ public abstract interface IUserDao {
 
 	public abstract Integer insertUserByOpenId(UserInfo userInfo);
 
+	public abstract UserInfo findUserByStudentId(String student_id);
+
 	public abstract void updateUserInfoById(UserInfo paramUserInfo);
 
 	public abstract UserInfo findUserById(int paramInt);
@@ -35,4 +37,8 @@ public abstract interface IUserDao {
 	public abstract void register(Register registerDO);
 
 	public abstract void saveFeedback(Feedback feedback);
+
+	public abstract Register findRegisterByStudentId(String student_id);
+
+	public abstract Register findRecentRegisterByStudentId(String student_id);
 }

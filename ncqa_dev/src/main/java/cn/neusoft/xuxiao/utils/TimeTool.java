@@ -229,6 +229,16 @@ public class TimeTool {
 	}
 
 	/**
+	 * 计算指定时间是多少周
+	 */
+	public static int getWeekOfYear(Date date){
+		Calendar c = Calendar.getInstance();
+		c.setTime(date);
+		c.setFirstDayOfWeek(Calendar.MONDAY);
+		return c.get(Calendar.WEEK_OF_YEAR);
+	}
+
+	/**
 	 * 字符串转时间
 	 * 
 	 * @param str

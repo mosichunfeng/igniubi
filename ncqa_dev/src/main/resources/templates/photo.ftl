@@ -25,7 +25,7 @@
         <#if list??>
             <#list list as map>
                 <#list map?keys as key>
-                    <img src="https://www.jiandev.cn/photo/getOnePhoto?week=${key}&name=${map["${key}"]}" width="240" height="320"></img>
+                    <img src="https://www.jiandev.cn/photo/getOnePhoto?week=${key}&name=${map["${key}"]}" width="256" height="320"></img>
                 </#list>
             </#list>
         </#if>

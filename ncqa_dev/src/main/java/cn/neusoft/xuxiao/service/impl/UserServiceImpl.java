@@ -69,6 +69,13 @@ public class UserServiceImpl implements IUserService {
         ValidationUtils.checkNotEmpty(Integer.valueOf(reqMsg.getId()), "用户id不能为空");
         ValidationUtils.checkNotEmpty(reqMsg.getStudent_id(), "学号不能为空");
         ValidationUtils.checkNotEmpty(reqMsg.getStudent_name(), "姓名不能为空");
+
+        UserInfo user = userDao.findUserByStudentId(reqMsg.getStudent_id());
+
+        if(user!=null){
+            throw new BusinessException(String.valueOf(ServiceResponseCode.BUSINESS_EXCEPTION),"该学生已被其他设备绑定！");
+        }
+
         StudentDO student = this.userDao.findStudentById(reqMsg.getStudent_id());
         if (null == student) {
             throw new BusinessException(String.valueOf(410), "学号输入错误！");
@@ -355,17 +362,28 @@ public class UserServiceImpl implements IUserService {
     public IsRegisterResponse isRegister(String user_id) {
         ValidationUtils.checkNotEmpty(user_id, "user_id不能为空");
         int uid = Integer.valueOf(user_id);
+        StudentDO stu = userDao.findStudentByUid(uid);
+        if(stu == null){
+            throw new BusinessException(String.valueOf(ServiceResponseCode.BUSINESS_EXCEPTION),"无此用户");
+        }
 
         IsRegisterResponse response = new IsRegisterResponse();
 
-        Register register = userDao.findRegisterByUid(uid);
+        Register register = userDao.findRecentRegisterByStudentId(stu.getStudent_id());
         if (register != null) {
-            response.setRegister(true);
-            response.setStart_time(register.getStart_time());
-            response.setStudent_name(register.getStudent_name());
+            String registerTime = register.getStart_time();
+            int weekOfYear = TimeTool.getWeekOfYear(TimeTool.StrToDate(registerTime));
+            int weekOfYear1 = TimeTool.getWeekOfYear();
+            if(weekOfYear==weekOfYear1) {
+                response.setRegister(true);
+                response.setStart_time(register.getStart_time());
+                response.setStudent_name(register.getStudent_name());
+            }else{
+                response.setStudent_name(stu.getStudent_name());
+                response.setRegister(false);
+            }
         } else {
-            StudentDO student = userDao.findStudentByUid(uid);
-            response.setStudent_name(student.getStudent_name());
+            response.setStudent_name(stu.getStudent_name());
             response.setRegister(false);
         }
         return response;
@@ -378,6 +396,17 @@ public class UserServiceImpl implements IUserService {
         ValidationUtils.checkNotEmpty(reqMsg.getAddress(), "地址非法！");
         Integer uid = Integer.valueOf(reqMsg.getUser_id());
         StudentDO student = userDao.findStudentByUid(uid);
+
+        Register reg = userDao.findRecentRegisterByStudentId(student.getStudent_id());
+        if(reg != null){
+            String start_time = reg.getStart_time();
+            int weekOfYear = TimeTool.getWeekOfYear(TimeTool.StrToDate(start_time));
+            int weekOfYear1 = TimeTool.getWeekOfYear();
+            if(weekOfYear == weekOfYear1){
+                System.out.println(student.getStudent_id());
+                throw new BusinessException(String.valueOf(ServiceResponseCode.BUSINESS_EXCEPTION),"本周已经签到过了，请勿再次签到！");
+            }
+        }
 
         Register register = new Register();
         register.setStudent_id(student.getStudent_id());
