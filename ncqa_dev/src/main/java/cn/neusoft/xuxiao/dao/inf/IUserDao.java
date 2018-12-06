@@ -41,4 +41,6 @@ public abstract interface IUserDao {
 	public abstract Register findRegisterByStudentId(String student_id);
 
 	public abstract Register findRecentRegisterByStudentId(String student_id);
+
+	public abstract List<StudentDO> findAllWGStudent();
 }

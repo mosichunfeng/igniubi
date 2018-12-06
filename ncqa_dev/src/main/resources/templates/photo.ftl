@@ -4,7 +4,7 @@
     </head>
 
     <body>
-        <form align="center" action="https://www.jiandev.cn/photo/index">
+        <form align="center" action="https://localhost/photo/index" method="POST">
             时间:<input type="text" name="week" value="${week}"></input>
             姓名:<input type="text" name="name" value=""></input>
             班级:
@@ -21,7 +21,10 @@
             </select>
             查询 <input type="submit"></form>
         </form>
-
+        <a href="https://www.jiandev.cn/user/exportRegister" align="center">导出本周所有签到记录</a>
+        <a href="https://www.jiandev.cn/user/exportTodayInRegister">导出今天在校学生签到情况</a>
+        <a href="https://www.jiandev.cn/user/exportThisWeekOutRegister">导出本周离校学校签到情况</a>
+        <a></a>
         <#if list??>
             <#list list as map>
                 <#list map?keys as key>

@@ -18,10 +18,14 @@ import cn.neusoft.xuxiao.webapi.entity.*;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.sql.Time;
 import java.util.*;
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.lang.time.DateUtils;
+import org.apache.poi.hssf.usermodel.*;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -72,8 +76,9 @@ public class UserServiceImpl implements IUserService {
 
         UserInfo user = userDao.findUserByStudentId(reqMsg.getStudent_id());
 
-        if(user!=null){
-            throw new BusinessException(String.valueOf(ServiceResponseCode.BUSINESS_EXCEPTION),"该学生已被其他设备绑定！");
+
+        if (user != null) {
+            throw new BusinessException(String.valueOf(ServiceResponseCode.BUSINESS_EXCEPTION), "该学生已被其他设备绑定！");
         }
 
         StudentDO student = this.userDao.findStudentById(reqMsg.getStudent_id());
@@ -363,8 +368,8 @@ public class UserServiceImpl implements IUserService {
         ValidationUtils.checkNotEmpty(user_id, "user_id不能为空");
         int uid = Integer.valueOf(user_id);
         StudentDO stu = userDao.findStudentByUid(uid);
-        if(stu == null){
-            throw new BusinessException(String.valueOf(ServiceResponseCode.BUSINESS_EXCEPTION),"无此用户");
+        if (stu == null) {
+            throw new BusinessException(String.valueOf(ServiceResponseCode.BUSINESS_EXCEPTION), "无此用户");
         }
 
         IsRegisterResponse response = new IsRegisterResponse();
@@ -374,11 +379,26 @@ public class UserServiceImpl implements IUserService {
             String registerTime = register.getStart_time();
             int weekOfYear = TimeTool.getWeekOfYear(TimeTool.StrToDate(registerTime));
             int weekOfYear1 = TimeTool.getWeekOfYear();
-            if(weekOfYear==weekOfYear1) {
-                response.setRegister(true);
-                response.setStart_time(register.getStart_time());
-                response.setStudent_name(register.getStudent_name());
-            }else{
+            if (weekOfYear == weekOfYear1) {
+
+                /**
+                 * 外出实习学生，一周签到一次
+                 */
+                if (stu.getWork_detail() == 1) {
+                    response.setRegister(true);
+                    response.setStart_time(register.getStart_time());
+                    response.setStudent_name(register.getStudent_name());
+                } else {
+                    if (DateUtils.isSameDay(TimeTool.StrToDate(register.getStart_time()), new Date())) {
+                        response.setRegister(true);
+                        response.setStart_time(register.getStart_time());
+                        response.setStudent_name(register.getStudent_name());
+                    } else {
+                        response.setStudent_name(stu.getStudent_name());
+                        response.setRegister(false);
+                    }
+                }
+            } else {
                 response.setStudent_name(stu.getStudent_name());
                 response.setRegister(false);
             }
@@ -398,13 +418,20 @@ public class UserServiceImpl implements IUserService {
         StudentDO student = userDao.findStudentByUid(uid);
 
         Register reg = userDao.findRecentRegisterByStudentId(student.getStudent_id());
-        if(reg != null){
+        if (reg != null) {
             String start_time = reg.getStart_time();
             int weekOfYear = TimeTool.getWeekOfYear(TimeTool.StrToDate(start_time));
             int weekOfYear1 = TimeTool.getWeekOfYear();
-            if(weekOfYear == weekOfYear1){
-                System.out.println(student.getStudent_id());
-                throw new BusinessException(String.valueOf(ServiceResponseCode.BUSINESS_EXCEPTION),"本周已经签到过了，请勿再次签到！");
+            if (weekOfYear == weekOfYear1) {
+                if (student.getWork_detail() == 1) {
+                    System.out.println(student.getStudent_id() + student.getStudent_name());
+                    throw new BusinessException(String.valueOf(ServiceResponseCode.BUSINESS_EXCEPTION), "本周已经签到过了，请勿再次签到！");
+                } else {
+                    if (DateUtils.isSameDay(TimeTool.StrToDate(reg.getStart_time()), new Date())) {
+                        System.out.println(student.getStudent_id() + student.getStudent_name());
+                        throw new BusinessException(String.valueOf(ServiceResponseCode.BUSINESS_EXCEPTION), "今天已经签到过了，请勿再次签到！");
+                    }
+                }
             }
         }
 
@@ -442,9 +469,9 @@ public class UserServiceImpl implements IUserService {
 
     @Override
     public SubmitFeedbackResponse submitFeedback(SubmitFeedbackRequest reqMsg) {
-        ValidationUtils.checkNotEmpty(String.valueOf(reqMsg.getUser_id()),"user_id不能为空！");
-        ValidationUtils.checkNotEmpty(reqMsg.getTitle(),"标题不能为空!");
-        ValidationUtils.checkNotEmpty(reqMsg.getContent(),"内容不能为空!");
+        ValidationUtils.checkNotEmpty(String.valueOf(reqMsg.getUser_id()), "user_id不能为空！");
+        ValidationUtils.checkNotEmpty(reqMsg.getTitle(), "标题不能为空!");
+        ValidationUtils.checkNotEmpty(reqMsg.getContent(), "内容不能为空!");
 
         Feedback feedback = new Feedback();
         feedback.setUser_id(reqMsg.getUser_id());
@@ -454,6 +481,200 @@ public class UserServiceImpl implements IUserService {
 
         userDao.saveFeedback(feedback);
         return new SubmitFeedbackResponse();
+    }
+
+    @Override
+    public void exportRegister(HttpServletResponse response) {
+        List<StudentDO> allWGStudent = userDao.findAllWGStudent();
+
+        List<StudentRegister> info = new ArrayList<>();
+        for (StudentDO student : allWGStudent) {
+            StudentRegister sr = new StudentRegister();
+            sr.setStudent_id(student.getStudent_id());
+            sr.setStudent_name(student.getStudent_name());
+            sr.setStudent_class(student.getStudent_class());
+
+            Register register = userDao.findRecentRegisterByStudentId(student.getStudent_id());
+
+            if (register == null) {
+                sr.setRegister_info("未签到");
+            } else {
+                String start_time = register.getStart_time();
+                OutSchoolStudentChoose(sr, register, start_time);
+            }
+            info.add(sr);
+        }
+
+        HSSFWorkbook workbook = new HSSFWorkbook();
+        HSSFSheet sheet = workbook.createSheet("成绩表");
+        String[] headers = {"学号", "姓名", "班级", "签到情况", "签到时间", "签到地点"};
+        String fileName = "网工团队第" + TimeTool.getWeekOfYear() + "周签到情况表" + System.currentTimeMillis() + ".xls";
+        try {
+            fileName = new String(fileName.getBytes("GB2312"), "8859_1");
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
+        int rowNum = 1;
+        HSSFRow row = sheet.createRow(0);
+        for (int i = 0; i < headers.length; i++) {
+            HSSFCell cell = row.createCell(i);
+            HSSFRichTextString text = new HSSFRichTextString(headers[i]);
+            cell.setCellValue(text);
+        }
+
+        cellFormat(info, sheet, rowNum);
+
+        response.setContentType("application/octet-stream");
+        response.setHeader("Content-disposition", "attachment;filename=" + fileName);
+        try {
+            response.flushBuffer();
+            workbook.write(response.getOutputStream());
+        } catch (IOException e) {
+            throw new BusinessException(String.valueOf(ServiceResponseCode.BUSINESS_EXCEPTION), "服务器异常，请联系管理员！");
+        }
+
+    }
+
+    @Override
+    public void exportTodayInRegister(HttpServletResponse response) {
+
+        List<StudentDO> allWGStudent = userDao.findAllWGStudent();
+        List<StudentRegister> info = new ArrayList<>();
+        Iterator<StudentDO> iterator = allWGStudent.iterator();
+        while (iterator.hasNext()){
+            StudentDO next = iterator.next();
+            if(next.getWork_detail()==1){
+                iterator.remove();
+            }
+        }
+
+        for(StudentDO student : allWGStudent){
+            StudentRegister sr = new StudentRegister();
+            sr.setStudent_id(student.getStudent_id());
+            sr.setStudent_name(student.getStudent_name());
+            sr.setStudent_class(student.getStudent_class());
+
+            Register register = userDao.findRecentRegisterByStudentId(student.getStudent_id());
+            if(DateUtils.isSameDay(TimeTool.StrToDate(register.getStart_time()),new Date())){
+                sr.setRegister_info("已签到");
+                sr.setRegister_time(register.getStart_time());
+                sr.setRegister_address(register.getAddress());
+            }else{
+                sr.setRegister_info("未签到");
+            }
+            info.add(sr);
+        }
+
+
+        HSSFWorkbook workbook = new HSSFWorkbook();
+        HSSFSheet sheet = workbook.createSheet("成绩表");
+        String[] headers = {"学号", "姓名", "班级", "签到情况", "签到时间", "签到地点"};
+        String fileName = "网工团队第" + TimeTool.DateToShortString(new Date()) + "天在校学生签到情况表" + System.currentTimeMillis() + ".xls";
+        try {
+            fileName = new String(fileName.getBytes("GB2312"), "8859_1");
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
+        int rowNum = 1;
+        HSSFRow row = sheet.createRow(0);
+        for (int i = 0; i < headers.length; i++) {
+            HSSFCell cell = row.createCell(i);
+            HSSFRichTextString text = new HSSFRichTextString(headers[i]);
+            cell.setCellValue(text);
+        }
+
+        cellFormat(info, sheet, rowNum);
+
+        response.setContentType("application/octet-stream");
+        response.setHeader("Content-disposition", "attachment;filename=" + fileName);
+        try {
+            response.flushBuffer();
+            workbook.write(response.getOutputStream());
+        } catch (IOException e) {
+            throw new BusinessException(String.valueOf(ServiceResponseCode.BUSINESS_EXCEPTION), "服务器异常，请联系管理员！");
+        }
+    }
+
+    private void cellFormat(List<StudentRegister> info, HSSFSheet sheet, int rowNum) {
+        for (int i = 0; i < info.size(); i++) {
+            StudentRegister sr = info.get(i);
+            HSSFRow row1 = sheet.createRow(rowNum);
+            row1.createCell(0).setCellValue(sr.getStudent_id());
+            row1.createCell(1).setCellValue(sr.getStudent_name());
+            row1.createCell(2).setCellValue(sr.getStudent_class());
+            row1.createCell(3).setCellValue(sr.getRegister_info());
+            row1.createCell(4).setCellValue(sr.getRegister_time());
+            row1.createCell(5).setCellValue(sr.getRegister_address());
+            rowNum++;
+        }
+    }
+
+    @Override
+    public void exportThisWeekOutRegister(HttpServletResponse response) {
+        List<StudentDO> allWGStudent = userDao.findAllWGStudent();
+        List<StudentRegister> info = new ArrayList<>();
+        Iterator<StudentDO> iterator = allWGStudent.iterator();
+        while (iterator.hasNext()){
+            StudentDO next = iterator.next();
+            if(next.getWork_detail()==0){
+                iterator.remove();
+            }
+        }
+
+        for(StudentDO student : allWGStudent){
+            StudentRegister sr = new StudentRegister();
+            sr.setStudent_id(student.getStudent_id());
+            sr.setStudent_name(student.getStudent_name());
+            sr.setStudent_class(student.getStudent_class());
+
+            Register register = userDao.findRecentRegisterByStudentId(student.getStudent_id());
+            String start_time = register.getStart_time();
+            OutSchoolStudentChoose(sr, register, start_time);
+            info.add(sr);
+        }
+
+
+        HSSFWorkbook workbook = new HSSFWorkbook();
+        HSSFSheet sheet = workbook.createSheet("成绩表");
+        String[] headers = {"学号", "姓名", "班级", "签到情况", "签到时间", "签到地点"};
+        String fileName = "网工团队第" + TimeTool.getWeekOfYear() + "周外出学生签到情况表" + System.currentTimeMillis() + ".xls";
+        try {
+            fileName = new String(fileName.getBytes("GB2312"), "8859_1");
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
+        int rowNum = 1;
+        HSSFRow row = sheet.createRow(0);
+        for (int i = 0; i < headers.length; i++) {
+            HSSFCell cell = row.createCell(i);
+            HSSFRichTextString text = new HSSFRichTextString(headers[i]);
+            cell.setCellValue(text);
+        }
+
+        cellFormat(info, sheet, rowNum);
+
+        response.setContentType("application/octet-stream");
+        response.setHeader("Content-disposition", "attachment;filename=" + fileName);
+        try {
+            response.flushBuffer();
+            workbook.write(response.getOutputStream());
+        } catch (IOException e) {
+            throw new BusinessException(String.valueOf(ServiceResponseCode.BUSINESS_EXCEPTION), "服务器异常，请联系管理员！");
+        }
+    }
+
+    private void OutSchoolStudentChoose(StudentRegister sr, Register register, String start_time) {
+        if (!StringUtil.isEmpty(start_time)) {
+            int weekOfYear = TimeTool.getWeekOfYear(TimeTool.StrToDate(start_time));
+            int weekOfYear1 = TimeTool.getWeekOfYear();
+            if (weekOfYear == weekOfYear1) {
+                sr.setRegister_info("已签到");
+                sr.setRegister_time(register.getStart_time());
+                sr.setRegister_address(register.getAddress());
+            } else {
+                sr.setRegister_info("未签到");
+            }
+        }
     }
 
 }

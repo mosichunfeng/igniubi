@@ -4,6 +4,7 @@ import cn.neusoft.xuxiao.dao.entity.*;
 import cn.neusoft.xuxiao.webapi.entity.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.servlet.http.HttpServletResponse;
 import java.util.List;
 
 public abstract interface IUserService{
@@ -32,4 +33,11 @@ public abstract interface IUserService{
   public IsRegisterResponse register(RegisterRequest reqMsg, MultipartFile file);
 
   public SubmitFeedbackResponse submitFeedback(SubmitFeedbackRequest reqMsg);
+
+  public void exportRegister(HttpServletResponse response);
+
+  void exportTodayInRegister(HttpServletResponse response);
+
+  void exportThisWeekOutRegister(HttpServletResponse response);
+
 }

@@ -1,5 +1,6 @@
 package cn.neusoft.xuxiao.webapi;
 
+import cn.neusoft.xuxiao.constants.ClassIdConstants;
 import cn.neusoft.xuxiao.service.inf.IPhotoService;
 import cn.neusoft.xuxiao.utils.ImageUtils;
 import cn.neusoft.xuxiao.utils.TimeTool;
@@ -15,10 +16,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.*;
 import java.nio.channels.Selector;
 import java.sql.Time;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.logging.FileHandler;
 
 @Controller

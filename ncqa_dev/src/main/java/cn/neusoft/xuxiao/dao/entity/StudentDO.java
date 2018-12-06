@@ -10,4 +10,5 @@ public class StudentDO {
 	private String student_class;
 	private String student_gender;
 	private String student_tel;
+	private int work_detail;
 }

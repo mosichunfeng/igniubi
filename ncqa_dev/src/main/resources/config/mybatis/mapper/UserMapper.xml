@@ -149,4 +149,12 @@
 			ORDER BY id DESC
 		LIMIT 1
 	</select>
+
+	<select id="findAllWGStudent" resultType="cn.neusoft.xuxiao.dao.entity.StudentDO">
+		SELECT
+			*
+		FROM
+			student
+		WHERE student_class IN('网络工程15201','网络工程15202','网络工程15203','网络工程15204','物联网15201','物联网15202','物联网15203','物联网15204')
+	</select>
 </mapper>

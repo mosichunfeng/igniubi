@@ -18,7 +18,6 @@ import java.util.Map;
 public class PhotoServiceImpl implements IPhotoService {
 
     private static String rootPath = "/home/ubuntu/ncqa_dev/registerImages/";
-
     @Override
     public List<Map<String,String>> getImagesHtml(PhotoSelecter selecter) {
 

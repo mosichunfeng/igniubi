@@ -17,6 +17,7 @@ import java.util.Set;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
@@ -131,5 +132,20 @@ public class UserController extends BaseController {
     public String submitFeedback(SubmitFeedbackRequest reqMsg){
         SubmitFeedbackResponse result = userService.submitFeedback(reqMsg);
         return createResponse(result,ServiceResponseCode.OK);
+    }
+
+    @RequestMapping("/user/exportRegister")
+    public void exportRegister(HttpServletResponse response){
+        userService.exportRegister(response);
+    }
+
+    @RequestMapping("/user/exportTodayInRegister")
+    public void exportTodayInRegister(HttpServletResponse response) {
+        userService.exportTodayInRegister(response);
+    }
+
+    @RequestMapping("/user/exportThisWeekOutRegister")
+    public void exportThisWeekOutRegister(HttpServletResponse response){
+        userService.exportThisWeekOutRegister(response);
     }
 }

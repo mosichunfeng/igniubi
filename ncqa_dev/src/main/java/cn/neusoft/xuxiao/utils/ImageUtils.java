@@ -10,8 +10,7 @@ public class ImageUtils {
     public static void imageFiletoClient(HttpServletResponse response,String rootPath) throws IOException {
         response.setContentType("text/html; charset=UTF-8");
         response.setContentType("image/jpeg");
-        response.setDateHeader("expries",
-                System.currentTimeMillis() + 1000 * 3600);
+        response.addHeader("Cache-Control","max-age=604800");
         FileInputStream fis = new FileInputStream(rootPath);
         OutputStream os = response.getOutputStream();
         try {
