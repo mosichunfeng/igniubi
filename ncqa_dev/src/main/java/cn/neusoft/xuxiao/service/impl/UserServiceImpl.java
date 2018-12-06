@@ -488,22 +488,7 @@ public class UserServiceImpl implements IUserService {
         List<StudentDO> allWGStudent = userDao.findAllWGStudent();
 
         List<StudentRegister> info = new ArrayList<>();
-        for (StudentDO student : allWGStudent) {
-            StudentRegister sr = new StudentRegister();
-            sr.setStudent_id(student.getStudent_id());
-            sr.setStudent_name(student.getStudent_name());
-            sr.setStudent_class(student.getStudent_class());
-
-            Register register = userDao.findRecentRegisterByStudentId(student.getStudent_id());
-
-            if (register == null) {
-                sr.setRegister_info("未签到");
-            } else {
-                String start_time = register.getStart_time();
-                OutSchoolStudentChoose(sr, register, start_time);
-            }
-            info.add(sr);
-        }
+        RigsterChoose(allWGStudent, info);
 
         HSSFWorkbook workbook = new HSSFWorkbook();
         HSSFSheet sheet = workbook.createSheet("成绩表");
@@ -535,6 +520,25 @@ public class UserServiceImpl implements IUserService {
 
     }
 
+    private void RigsterChoose(List<StudentDO> allWGStudent, List<StudentRegister> info) {
+        for (StudentDO student : allWGStudent) {
+            StudentRegister sr = new StudentRegister();
+            sr.setStudent_id(student.getStudent_id());
+            sr.setStudent_name(student.getStudent_name());
+            sr.setStudent_class(student.getStudent_class());
+
+            Register register = userDao.findRecentRegisterByStudentId(student.getStudent_id());
+
+            if (register == null) {
+                sr.setRegister_info("未签到");
+            } else {
+                String start_time = register.getStart_time();
+                OutSchoolStudentChoose(sr, register, start_time);
+            }
+            info.add(sr);
+        }
+    }
+
     @Override
     public void exportTodayInRegister(HttpServletResponse response) {
 
@@ -555,10 +559,14 @@ public class UserServiceImpl implements IUserService {
             sr.setStudent_class(student.getStudent_class());
 
             Register register = userDao.findRecentRegisterByStudentId(student.getStudent_id());
-            if(DateUtils.isSameDay(TimeTool.StrToDate(register.getStart_time()),new Date())){
-                sr.setRegister_info("已签到");
-                sr.setRegister_time(register.getStart_time());
-                sr.setRegister_address(register.getAddress());
+            if(register != null) {
+                if (DateUtils.isSameDay(TimeTool.StrToDate(register.getStart_time()), new Date())) {
+                    sr.setRegister_info("已签到");
+                    sr.setRegister_time(register.getStart_time());
+                    sr.setRegister_address(register.getAddress());
+                } else {
+                    sr.setRegister_info("未签到");
+                }
             }else{
                 sr.setRegister_info("未签到");
             }
@@ -621,17 +629,7 @@ public class UserServiceImpl implements IUserService {
             }
         }
 
-        for(StudentDO student : allWGStudent){
-            StudentRegister sr = new StudentRegister();
-            sr.setStudent_id(student.getStudent_id());
-            sr.setStudent_name(student.getStudent_name());
-            sr.setStudent_class(student.getStudent_class());
-
-            Register register = userDao.findRecentRegisterByStudentId(student.getStudent_id());
-            String start_time = register.getStart_time();
-            OutSchoolStudentChoose(sr, register, start_time);
-            info.add(sr);
-        }
+        RigsterChoose(allWGStudent, info);
 
 
         HSSFWorkbook workbook = new HSSFWorkbook();
