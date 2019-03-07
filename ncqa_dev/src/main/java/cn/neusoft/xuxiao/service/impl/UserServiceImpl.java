@@ -423,10 +423,10 @@ public class UserServiceImpl implements IUserService {
                     System.out.println(student.getStudent_id() + student.getStudent_name());
                     throw new BusinessException(String.valueOf(ServiceResponseCode.BUSINESS_EXCEPTION), "本周已经签到过了，请勿再次签到！");
                 } else {
-                    if (DateUtils.isSameDay(TimeTool.StrToDate(reg.getStart_time()), new Date())) {
-                        System.out.println(student.getStudent_id() + student.getStudent_name());
-                        throw new BusinessException(String.valueOf(ServiceResponseCode.BUSINESS_EXCEPTION), "今天已经签到过了，请勿再次签到！");
-                    }
+//                    if (DateUtils.isSameDay(TimeTool.StrToDate(reg.getStart_time()), new Date())) {
+//                        System.out.println(student.getStudent_id() + student.getStudent_name());
+//                        throw new BusinessException(String.valueOf(ServiceResponseCode.BUSINESS_EXCEPTION), "今天已经签到过了，请勿再次签到！");
+//                    }
                 }
             }
         }
