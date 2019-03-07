@@ -9,26 +9,20 @@ import cn.neusoft.xuxiao.dao.inf.IQuestionDao;
 import cn.neusoft.xuxiao.dao.inf.IUserDao;
 import cn.neusoft.xuxiao.exception.BusinessException;
 import cn.neusoft.xuxiao.service.inf.IUserService;
-import cn.neusoft.xuxiao.utils.Base64Utils;
-import cn.neusoft.xuxiao.utils.StringUtil;
-import cn.neusoft.xuxiao.utils.TimeTool;
-import cn.neusoft.xuxiao.utils.ValidationUtils;
-import cn.neusoft.xuxiao.utils.WxApplicationDecoder;
+import cn.neusoft.xuxiao.utils.*;
 import cn.neusoft.xuxiao.webapi.entity.*;
-
-import java.io.File;
-import java.io.IOException;
-import java.io.UnsupportedEncodingException;
-import java.sql.Time;
-import java.util.*;
-import javax.annotation.Resource;
-import javax.servlet.http.HttpServletResponse;
-
 import org.apache.commons.lang.time.DateUtils;
 import org.apache.poi.hssf.usermodel.*;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
+
+import javax.annotation.Resource;
+import javax.servlet.http.HttpServletResponse;
+import java.io.File;
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.util.*;
 
 @Service("iUserServiceImpl")
 public class UserServiceImpl implements IUserService {
@@ -389,14 +383,16 @@ public class UserServiceImpl implements IUserService {
                     response.setStart_time(register.getStart_time());
                     response.setStudent_name(register.getStudent_name());
                 } else {
-                    if (DateUtils.isSameDay(TimeTool.StrToDate(register.getStart_time()), new Date())) {
-                        response.setRegister(true);
-                        response.setStart_time(register.getStart_time());
-                        response.setStudent_name(register.getStudent_name());
-                    } else {
-                        response.setStudent_name(stu.getStudent_name());
-                        response.setRegister(false);
-                    }
+//                    if (DateUtils.isSameDay(TimeTool.StrToDate(register.getStart_time()), new Date())) {
+//                        response.setRegister(true);
+//                        response.setStart_time(register.getStart_time());
+//                        response.setStudent_name(register.getStudent_name());
+//                    } else {
+//                        response.setStudent_name(stu.getStudent_name());
+//                        response.setRegister(false);
+//                    }
+                    response.setStudent_name(stu.getStudent_name());
+                    response.setRegister(false);
                 }
             } else {
                 response.setStudent_name(stu.getStudent_name());
@@ -545,21 +541,21 @@ public class UserServiceImpl implements IUserService {
         List<StudentDO> allWGStudent = userDao.findAllWGStudent();
         List<StudentRegister> info = new ArrayList<>();
         Iterator<StudentDO> iterator = allWGStudent.iterator();
-        while (iterator.hasNext()){
+        while (iterator.hasNext()) {
             StudentDO next = iterator.next();
-            if(next.getWork_detail()==1){
+            if (next.getWork_detail() == 1) {
                 iterator.remove();
             }
         }
 
-        for(StudentDO student : allWGStudent){
+        for (StudentDO student : allWGStudent) {
             StudentRegister sr = new StudentRegister();
             sr.setStudent_id(student.getStudent_id());
             sr.setStudent_name(student.getStudent_name());
             sr.setStudent_class(student.getStudent_class());
 
             Register register = userDao.findRecentRegisterByStudentId(student.getStudent_id());
-            if(register != null) {
+            if (register != null) {
                 if (DateUtils.isSameDay(TimeTool.StrToDate(register.getStart_time()), new Date())) {
                     sr.setRegister_info("已签到");
                     sr.setRegister_time(register.getStart_time());
@@ -567,7 +563,7 @@ public class UserServiceImpl implements IUserService {
                 } else {
                     sr.setRegister_info("未签到");
                 }
-            }else{
+            } else {
                 sr.setRegister_info("未签到");
             }
             info.add(sr);
@@ -622,9 +618,9 @@ public class UserServiceImpl implements IUserService {
         List<StudentDO> allWGStudent = userDao.findAllWGStudent();
         List<StudentRegister> info = new ArrayList<>();
         Iterator<StudentDO> iterator = allWGStudent.iterator();
-        while (iterator.hasNext()){
+        while (iterator.hasNext()) {
             StudentDO next = iterator.next();
-            if(next.getWork_detail()==0){
+            if (next.getWork_detail() == 0) {
                 iterator.remove();
             }
         }
